@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 abstract class RetrofitClient {
     companion object {
-        private const val BASE_URL = "  https://every-swans-wish.loca.lt"
+        private const val BASE_URL = "https://hot-parents-exist.loca.lt"
         private lateinit var INSTANCE : Retrofit
 
         private fun getRetrofitInstance() : Retrofit{
