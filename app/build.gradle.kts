@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -40,6 +42,7 @@ android {
 
 dependencies {
     implementation ("com.squareup.okhttp3:okhttp-sse:4.9.3")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 
     implementation ("com.squareup.retrofit2:retrofit:2.5.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.3.0")
