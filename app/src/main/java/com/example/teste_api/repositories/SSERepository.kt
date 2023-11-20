@@ -1,6 +1,7 @@
 package com.example.teste_api.repositories
 
 import android.util.Log
+import com.example.teste_api.Properties
 import com.example.teste_api.models.SSEEventData
 import com.example.teste_api.models.STATUS
 import com.google.gson.Gson
@@ -15,7 +16,7 @@ import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 class SSERepository {
-    private val EVENTSURL = " https://spotty-animals-cheat.loca.lt/chat"
+    private val EVENTSURL = "${Properties.apiUrl }/chat"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)
@@ -28,7 +29,6 @@ class SSERepository {
         .header("Accept", "application/json")
         .addHeader("Accept", "text/event-stream")
         .build()
-
 
     // flow
     var sseEventsFlow = MutableStateFlow(SSEEventData(STATUS.NONE))

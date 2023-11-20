@@ -1,3 +1,4 @@
+import com.example.teste_api.Properties
 import com.example.teste_api.services.MessageService
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -5,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 abstract class RetrofitClient {
     companion object {
-        private const val BASE_URL = "https://spotty-animals-cheat.loca.lt"
+        private val BASE_URL = Properties.apiUrl
         private lateinit var INSTANCE : Retrofit
 
         private fun getRetrofitInstance() : Retrofit{

@@ -10,6 +10,5 @@ import retrofit2.http.POST
 
 interface MessageService {
     @POST("message")
-    @Headers("Content-Type: application/json")
     fun addMessage(@Body msg: Message) : Call<Message>
 }
