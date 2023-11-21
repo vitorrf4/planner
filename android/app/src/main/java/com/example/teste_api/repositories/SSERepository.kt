@@ -4,7 +4,6 @@ import android.util.Log
 import com.example.teste_api.Properties
 import com.example.teste_api.models.SSEEventData
 import com.example.teste_api.models.STATUS
-import com.google.gson.Gson
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -12,11 +11,10 @@ import okhttp3.Response
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
-import org.json.JSONObject
 import java.util.concurrent.TimeUnit
 
 class SSERepository {
-    private val EVENTSURL = "${Properties.apiUrl }/chat"
+    private val EVENTS_URL = "${Properties.apiUrl}/chat"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)
@@ -25,7 +23,7 @@ class SSERepository {
         .build()
 
     private val sseRequest = Request.Builder()
-        .url(EVENTSURL)
+        .url(EVENTS_URL)
         .header("Accept", "application/json")
         .addHeader("Accept", "text/event-stream")
         .build()
@@ -44,7 +42,6 @@ class SSERepository {
 
         override fun onClosed(eventSource: EventSource) {
             super.onClosed(eventSource)
-//            ---- do something ----
 
             Log.d("TEST_SSE", "REPO| Connection closed")
             val event = SSEEventData(STATUS.CLOSED)
@@ -54,7 +51,6 @@ class SSERepository {
         override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
             super.onEvent(eventSource, id, type, data)
 
-//            ---- do something ----
             Log.d("TEST_SSE", "REPO| event received, Data: $data")
 
             var event = SSEEventData(STATUS.SUCCESS)
@@ -66,7 +62,7 @@ class SSERepository {
             super.onFailure(eventSource, t, response)
 
             Log.d("TEST_SSE", "REPO| Failure:")
-            Log.d("TEST_SSE", "${response}")
+            Log.d("TEST_SSE", "$response")
             Log.d("TEST_SSE", "${response?.headers}")
             t?.printStackTrace()
 
@@ -80,10 +76,9 @@ class SSERepository {
     init {
         initEventSource()
     }
+
     private fun initEventSource() {
         EventSources.createFactory(sseClient)
             .newEventSource(request = sseRequest, listener = sseEventSourceListener)
     }
-
-
 }

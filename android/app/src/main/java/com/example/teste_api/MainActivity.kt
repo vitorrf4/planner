@@ -64,7 +64,7 @@ class MainActivity : AppCompatActivity() {
                         var separatedData = event.message?.split(",")
                         separatedData?.forEach { s -> s.replace("\"", "") }
 
-                        separatedData?.forEach { s -> binding.txtMessage.append("\n${s}") }
+                        separatedData?.forEach { data -> binding.txtMessage.append("\n $data") }
                     }
 
                     STATUS.ERROR -> {

@@ -12,8 +12,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SSEViewModel : ViewModel(){
-    val repository = SSERepository()
-
+    private val repository = SSERepository()
     var sseEvents = MutableLiveData<SSEEventData>()
 
     fun getSSEEvents() = viewModelScope.launch {
