@@ -6,7 +6,7 @@ import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.teste_api.databinding.ActivityMainBinding
 import com.example.teste_api.models.Message
-import com.example.teste_api.models.STATUS
+import com.example.teste_api.models.EVENT_STATUS
 import com.example.teste_api.viewmodel.SSEViewModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -51,14 +51,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun callSSE() {
-        viewModel?.sseEvents?.observe(this) {
+        viewModel.sseEvents.observe(this) {
             it?.let { event ->
-                when(event.status) {
-                    STATUS.OPEN -> {
+                when(event.eventStatus) {
+                    EVENT_STATUS.OPEN -> {
                         Log.d(TAG, "MAIN| Event open")
                     }
 
-                    STATUS.SUCCESS -> {
+                    EVENT_STATUS.SUCCESS -> {
                         Log.d(TAG, "MAIN| Event successful")
 
                         var separatedData = event.message?.split(",")
@@ -67,11 +67,11 @@ class MainActivity : AppCompatActivity() {
                         separatedData?.forEach { data -> binding.txtMessage.append("\n $data") }
                     }
 
-                    STATUS.ERROR -> {
+                    EVENT_STATUS.ERROR -> {
                         Log.d(TAG, "MAIN| Event error")
                     }
 
-                    STATUS.CLOSED -> {
+                    EVENT_STATUS.CLOSED -> {
                         Log.d(TAG, "MAIN| Event closed")
                     }
 

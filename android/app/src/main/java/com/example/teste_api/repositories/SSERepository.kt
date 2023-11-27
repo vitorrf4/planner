@@ -3,7 +3,7 @@ package com.example.teste_api.repositories
 import android.util.Log
 import com.example.teste_api.Properties
 import com.example.teste_api.models.SSEEventData
-import com.example.teste_api.models.STATUS
+import com.example.teste_api.models.EVENT_STATUS
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -29,14 +29,14 @@ class SSERepository {
         .build()
 
     // flow
-    var sseEventsFlow = MutableStateFlow(SSEEventData(STATUS.NONE))
+    var sseEventsFlow = MutableStateFlow(SSEEventData(EVENT_STATUS.NONE))
 
     private val sseEventSourceListener = object : EventSourceListener() {
         override fun onOpen(eventSource: EventSource, response: Response) {
             super.onOpen(eventSource, response)
 
             Log.d("TEST_SSE", "REPO| Connection opened")
-            val event = SSEEventData(STATUS.OPEN)
+            val event = SSEEventData(EVENT_STATUS.OPEN)
             sseEventsFlow.tryEmit(event)
         }
 
@@ -44,7 +44,7 @@ class SSERepository {
             super.onClosed(eventSource)
 
             Log.d("TEST_SSE", "REPO| Connection closed")
-            val event = SSEEventData(STATUS.CLOSED)
+            val event = SSEEventData(EVENT_STATUS.CLOSED)
             sseEventsFlow.tryEmit(event)
         }
 
@@ -53,7 +53,7 @@ class SSERepository {
 
             Log.d("TEST_SSE", "REPO| event received, Data: $data")
 
-            var event = SSEEventData(STATUS.SUCCESS)
+            var event = SSEEventData(EVENT_STATUS.SUCCESS)
             event.message = data
             sseEventsFlow.tryEmit(event)
         }
@@ -66,7 +66,7 @@ class SSERepository {
             Log.d("TEST_SSE", "${response?.headers}")
             t?.printStackTrace()
 
-            val event = SSEEventData(STATUS.ERROR)
+            val event = SSEEventData(EVENT_STATUS.ERROR)
             sseEventsFlow.tryEmit(event)
         }
 
