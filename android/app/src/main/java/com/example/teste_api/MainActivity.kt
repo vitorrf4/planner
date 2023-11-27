@@ -1,6 +1,7 @@
 package com.example.teste_api
 
 import RetrofitClient
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +33,9 @@ class MainActivity : AppCompatActivity() {
             sendMessage(msg)
         }
 
+        binding.btnCalendario.setOnClickListener {
+            startActivity(Intent(this, CalendarioActivity::class.java))
+        }
     }
 
     private fun sendMessage(msg : Message) {

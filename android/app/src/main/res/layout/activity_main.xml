@@ -28,6 +28,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="SEND" />
+    <Button
+        android:id="@+id/btnCalendario"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CALENDARIO" />
 
     <TextView
         android:id="@+id/txtMessage"
