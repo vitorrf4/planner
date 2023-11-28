@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 class SSERepository {
-    private val EVENTS_URL = "${Properties.apiUrl}/chat"
+    private val EVENTS_URL = "${Properties.apiUrl}/connect"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)

@@ -1,8 +1,7 @@
 const express = require("express");
-const Tarefa = require("../models/tarefa");
-const tarefas = require("../models/tarefaDB")
-// const tarefas = new tarefasDb();
 const router = express.Router();
+const Tarefa = require("../models/tarefa");
+const tarefas = require("../models/tarefaDB");
 
 router.get("/", (req, res) => {
     res.json(tarefas.getTarefas());

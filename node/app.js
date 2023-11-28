@@ -1,11 +1,9 @@
 // imports
 const express = require('express');
 const cors = require('cors');
-const ngrok = require("@ngrok/ngrok");
+const ngrok = require("./ngrok");
 const tarefaController = require("./controllers/tarefaController");
-const tarefasDB = require("./models/tarefaDB");
-const Tarefa = require("./models/tarefa")
-require("dotenv").config();
+const sseController = require("./controllers/sseController");
 
 // configuracao do express
 const app = express();
@@ -14,80 +12,28 @@ app.use(express.json());
 
 const PORT = 3000;
 
-//ngrok
-async function iniciaNgrok() {
-    const ngrokConfig = {
-        addr: 3000,
-        authtoken: process.env.AUTH_TOKEN,
-        domain: "stable-phoenix-worthy.ngrok-free.app"
-    }
-
-    return await ngrok.connect(ngrokConfig);
-}
-
 // começa o programa
 app.listen(PORT, () => {
-    console.log(`Servidor iniciado no http://localhost:${PORT}`)
-    iniciaNgrok().then(l => console.log(`Ngrok iniciado na URL ${l.url()}`));
+    console.log(`Servidor iniciado em http://localhost:${PORT}`);
+    ngrok.then(r => console.log(`Ngrok iniciado na url ${r.url()}`));
 });
 
 // middleware de debug
 app.all("*", (req, res, next) => {
     console.log(`${req.method} ${req.url}`);
-    if (req.method === "POST") console.log(req.body);
+    if (req.method === "POST")
+        console.log(req.body);
 
     next();
 });
 
 // rotas
-app.get("/", (req, res) => res.send("API está funcionando"));
-app.get('/chat', eventsHandler);
-app.post('/message', adicionarTarefa);
 app.use("/tarefas", tarefaController);
+app.use("/sse", sseController);
 
+// tratamento de rota nao existente
 app.all("*", (req, res) => {
     res.status(404);
     res.send(`${req.method} ${req.url} não é um endpoint válido`)
 });
 
-// funcoes
-let subscribers = [];
-
-function eventsHandler(req, res) {
-    const headers = {
-        'Content-Type': 'text/event-stream',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'no-cache'
-    };
-    res.writeHead(200, headers);
-    res.write(`data: []\n\n`);
-
-    const idCliente = Date.now();
-    const novoCliente = {
-        id: idCliente,
-        response: res
-    };
-
-    subscribers.push(novoCliente);
-
-    req.on('close', () => {
-        console.log(`${idCliente} fechou a conexão`);
-        subscribers = subscribers.filter(client => client.id !== idCliente);
-    });
-}
-
-function enviarEventosAosInscritos(mensagem) {
-    console.log("enviando evento...");
-    subscribers.forEach(client => client.response.write(`data: ${JSON.stringify(mensagem)}\n\n`))
-}
-
-function adicionarTarefa(req, res) {
-    const body = req.body;
-    const novaTarefa = new Tarefa(body.titulo, body.descricao, body.dataFinal);
-
-    res.json({"tarefa" : novaTarefa});
-
-    tarefasDB.adicionarTarefa(novaTarefa)
-
-    return enviarEventosAosInscritos(novaTarefa);
-}

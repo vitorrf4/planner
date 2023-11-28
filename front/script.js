@@ -3,7 +3,7 @@ const myMessages = document.getElementById("messages")
 const sendBtn = document.getElementById("send")
 sendBtn.addEventListener("click", sendMsg, false)
 
-let source = new EventSource('http://localhost:3000/chat');
+let source = new EventSource('http://localhost:3000/sse/connect');
 
 source.addEventListener('message', function(e) {
     console.log(e);
@@ -43,7 +43,7 @@ async function sendMsg() {
         dataFinal: dataFinal
     });
 
-    await fetch("http://localhost:3000/message", {
+    await fetch("http://localhost:3000/sse/add-tarefa", {
             method: "POST",
             body: tarefa,
             headers: {
