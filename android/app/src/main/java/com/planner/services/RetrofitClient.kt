@@ -1,4 +1,4 @@
-package com.example.aula20
+package com.planner.services
 
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 abstract class RetrofitClient {
     companion object {
-        private val BASE_URL = Properties.apiUrl
+        private val BASE_URL = com.planner.Properties.apiUrl
         private lateinit var INSTANCE : Retrofit
 
         private fun getRetrofitInstance() : Retrofit{

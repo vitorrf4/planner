@@ -10,14 +10,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Aula20"
+        android:theme="@style/Theme.Planner"
         tools:targetApi="31">
         <activity
-            android:name=".view.CadastroActivity"
+            android:name="com.planner.view.CadastroActivity"
             android:exported="true">
         </activity>
         <activity
-            android:name=".view.MainActivity"
+            android:name="com.planner.view.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

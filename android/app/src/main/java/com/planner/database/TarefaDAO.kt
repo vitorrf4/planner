@@ -1,11 +1,10 @@
-package com.example.aula20.database
+package com.planner.database
 
 import androidx.room.*
-import com.example.aula20.models.Tarefa
+import com.planner.models.Tarefa
 
 @Dao
 interface TarefaDAO {
-
     @Insert
     fun salvarTarefa(tarefa: Tarefa) : Long
 

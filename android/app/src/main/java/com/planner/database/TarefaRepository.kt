@@ -1,7 +1,7 @@
-package com.example.aula20.database
+package com.planner.database
 
 import android.content.Context
-import com.example.aula20.models.Tarefa
+import com.planner.models.Tarefa
 
 class TarefaRepository(context: Context) {
     private val DAO = TarefaDataBase.getInstance(context).getDAO()

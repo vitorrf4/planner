@@ -1,4 +1,4 @@
-package com.example.aula20.models
+package com.planner.models
 
 import android.os.Build
 import androidx.annotation.RequiresApi

@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "Aula20"
+rootProject.name = "planner"
 include ':app'

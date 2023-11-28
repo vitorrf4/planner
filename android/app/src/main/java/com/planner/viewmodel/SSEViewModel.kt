@@ -1,17 +1,18 @@
-package com.example.aula20
+package com.planner.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.aula20.models.EVENT_STATUS
-import com.example.aula20.models.SSEEventData
+import com.planner.models.EVENT_STATUS
+import com.planner.models.SSEEventData
+import com.planner.services.SSEConnection
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SSEViewModel : ViewModel() {
-    private var repository = SSERepository()
+    private var repository = SSEConnection()
     var sseEvents = MutableLiveData<SSEEventData>()
 
     fun getSSEEvents() = viewModelScope.launch {
@@ -26,6 +27,6 @@ class SSEViewModel : ViewModel() {
     }
 
     fun retryConnection() {
-        this.repository = SSERepository()
+        this.repository = SSEConnection()
     }
 }

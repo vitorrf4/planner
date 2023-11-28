@@ -1,11 +1,11 @@
-package com.example.aula20.viewmodel
+package com.planner.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.aula20.models.Tarefa
-import com.example.aula20.database.TarefaRepository
+import com.planner.database.TarefaRepository
+import com.planner.models.Tarefa
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 

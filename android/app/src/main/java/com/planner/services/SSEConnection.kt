@@ -1,13 +1,13 @@
-package com.example.aula20
+package com.planner.services
 
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.aula20.models.EVENT_STATUS
-import com.example.aula20.models.SSEEventData
-import com.example.aula20.models.Tarefa
 import com.google.gson.Gson
 import com.google.gson.JsonObject
+import com.planner.models.EVENT_STATUS
+import com.planner.models.SSEEventData
+import com.planner.models.Tarefa
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -18,8 +18,8 @@ import okhttp3.sse.EventSources
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
-class SSERepository {
-    private val EVENTS_URL = "${Properties.apiUrl}/sse/connect"
+class SSEConnection {
+    private val EVENTS_URL = "${com.planner.Properties.apiUrl}/sse/connect"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)

@@ -1,6 +1,6 @@
-package com.example.aula20
+package com.planner.services
 
-import com.example.aula20.models.Tarefa
+import com.planner.models.Tarefa
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST

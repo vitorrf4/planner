@@ -1,4 +1,4 @@
-package com.example.aula20.view
+package com.planner.view
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,12 +7,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.aula20.SSEService
-import com.example.aula20.SSEViewModel
-import com.example.aula20.databinding.ActivityMainBinding
-import com.example.aula20.models.EVENT_STATUS
-import com.example.aula20.view.adapter.TarefaAdapter
-import com.example.aula20.viewmodel.MainViewModel
+import com.planner.databinding.ActivityMainBinding
+import com.planner.models.EVENT_STATUS
+import com.planner.services.SSEService
+import com.planner.view.adapter.TarefaAdapter
+import com.planner.viewmodel.MainViewModel
+import com.planner.viewmodel.SSEViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding

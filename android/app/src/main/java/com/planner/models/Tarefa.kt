@@ -1,4 +1,4 @@
-package com.example.aula20.models
+package com.planner.models
 
 import android.annotation.SuppressLint
 import androidx.room.ColumnInfo

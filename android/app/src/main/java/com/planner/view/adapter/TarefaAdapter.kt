@@ -1,4 +1,4 @@
-package com.example.aula20.view.adapter
+package com.planner.view.adapter
 
 import android.content.Context
 import android.os.Build
@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.example.aula20.R
-import com.example.aula20.models.FormataData
-import com.example.aula20.models.Tarefa
-import com.example.aula20.view.viewholder.TarefaViewHolder
+import com.planner.R
+import com.planner.models.FormataData
+import com.planner.models.Tarefa
+import com.planner.view.viewholder.TarefaViewHolder
 
 class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolder>() {
     lateinit var listaTarefas : List<Tarefa>
@@ -20,9 +20,7 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
         val tarefaLayout = LayoutInflater.from(context)
             .inflate(R.layout.tarefa_layout, parent, false)
 
-        var holder = TarefaViewHolder(tarefaLayout)
-
-        return holder
+        return TarefaViewHolder(tarefaLayout)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

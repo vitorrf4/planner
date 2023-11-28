@@ -1,4 +1,4 @@
-package com.example.aula20.models
+package com.planner.models
 
 data class SSEEventData(
     val eventStatus: EVENT_STATUS? = null,

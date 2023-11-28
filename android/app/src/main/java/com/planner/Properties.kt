@@ -1,4 +1,4 @@
-package com.example.aula20
+package com.planner
 
 class Properties private constructor() {
     companion object {

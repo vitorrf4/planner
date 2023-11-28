@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.aula20'
+    namespace 'com.planner'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.aula20"
+        applicationId "com.planner"
         minSdk 25
         targetSdk 34
         versionCode 1
