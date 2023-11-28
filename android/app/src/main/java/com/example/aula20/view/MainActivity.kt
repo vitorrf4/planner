@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.aula20.SSEService
 import com.example.aula20.SSEViewModel
 import com.example.aula20.databinding.ActivityMainBinding
+import com.example.aula20.models.EVENT_STATUS
 import com.example.aula20.view.adapter.TarefaAdapter
 import com.example.aula20.viewmodel.MainViewModel
-import com.example.teste_api.models.EVENT_STATUS
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -43,6 +43,15 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnNovaTarefa.setOnClickListener {
             startActivity(Intent(this, CadastroActivity::class.java))
+        }
+
+        binding.btnRetry.setOnClickListener {
+            if (sseViewModel.sseEvents.value?.eventStatus != EVENT_STATUS.CLOSED) {
+                Toast.makeText(this, "Conexão já estabelecida", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
+            sseViewModel.retryConnection()
         }
     }
 

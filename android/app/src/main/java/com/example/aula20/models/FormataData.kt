@@ -1,4 +1,4 @@
-package com.example.aula20.services.model
+package com.example.aula20.models
 
 import android.os.Build
 import androidx.annotation.RequiresApi

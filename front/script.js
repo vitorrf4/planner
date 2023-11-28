@@ -16,13 +16,14 @@ source.addEventListener('message', function(e) {
         }
         return;
     }
-    msgGeneration(data);
+
+    if (data !== []) {
+        msgGeneration(data);
+    }
 }, false);
 
 source.addEventListener('open', function(e) {
     console.log(e.type);
-
-    getTarefas().then();
 }, false);
 
 source.addEventListener('error', function(e) {

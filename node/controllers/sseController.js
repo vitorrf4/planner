@@ -2,48 +2,38 @@ const express = require("express");
 const router = express.Router();
 const Tarefa = require("../models/tarefa");
 const tarefasDB = require("../models/tarefaDB");
+const betterSse = require("better-sse")
 
-let subscribers = [];
+const channel = betterSse.createChannel();
 
-router.get("/connect", (req, res) => {
-    const headers = {
-        'Content-Type': 'text/event-stream',
-        'Connection': 'keep-alive',
-        'Cache-Control': 'no-cache'
-    };
-    res.writeHead(200, headers);
-    res.write(`data: []\n\n`);
+router.get("/connect", async (req, res) => {
+    const session = await betterSse.createSession(req, res);
 
-    const idCliente = Date.now();
-    const novoCliente = {
-        id: idCliente,
-        response: res
-    };
+    channel.register(session);
 
-    subscribers.push(novoCliente);
+    console.log("A user has joined: ", channel.sessionCount);
 
-    req.on('close', () => {
-        console.log(`${idCliente} fechou a conexão`);
-        subscribers = subscribers.filter(client => client.id !== idCliente);
-    });
+    // verifica se o request está vindo do browser
+    if (req.headers["user-agent"].includes("Mozilla")) {
+        session.push(tarefasDB.getTarefas());
+        return;
+    }
+
+    session.push("[]");
 });
 
-router.post("/add-tarefa", (req, res) => {
+router.post("/add-tarefa", async (req, res) => {
     const body = req.body;
     const novaTarefa = new Tarefa(body.titulo, body.descricao, body.dataFinal);
 
-    res.json({"tarefa" : novaTarefa});
+    tarefasDB.adicionarTarefa(novaTarefa);
 
-    tarefasDB.adicionarTarefa(novaTarefa)
-
-    return enviarEventosAosInscritos(novaTarefa);
-
+    return channel.broadcast(novaTarefa);
 });
 
-function enviarEventosAosInscritos(mensagem) {
-    subscribers.forEach(sub => {
-        sub.response.write(`data: ${JSON.stringify(mensagem)}\n\n`)
-    });
-}
+router.get("/sessions", (req, res) => {
+    res.json({channels: channel.activeSessions.length});
+})
+
 
 module.exports = router;

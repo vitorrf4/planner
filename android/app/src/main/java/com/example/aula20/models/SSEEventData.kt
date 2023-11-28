@@ -1,6 +1,4 @@
-package com.example.teste_api.models
-
-import com.example.aula20.services.model.Tarefa
+package com.example.aula20.models
 
 data class SSEEventData(
     val eventStatus: EVENT_STATUS? = null,
@@ -8,9 +6,9 @@ data class SSEEventData(
 )
 
 enum class EVENT_STATUS {
-    SUCCESS,
-    ERROR,
     NONE,
+    OPEN,
+    SUCCESS,
     CLOSED,
-    OPEN
+    ERROR
 }

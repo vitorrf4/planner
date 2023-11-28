@@ -1,5 +1,5 @@
-import com.example.aula20.Properties
-import com.example.aula20.TarefaService
+package com.example.aula20
+
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -10,7 +10,7 @@ abstract class RetrofitClient {
         private lateinit var INSTANCE : Retrofit
 
         private fun getRetrofitInstance() : Retrofit{
-            if(!::INSTANCE.isInitialized) {
+            if(!Companion::INSTANCE.isInitialized) {
                 val HTTP = OkHttpClient.Builder()
 
                 INSTANCE = Retrofit.Builder()

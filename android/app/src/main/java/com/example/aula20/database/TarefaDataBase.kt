@@ -1,12 +1,12 @@
-package com.example.aula20.services.repository
+package com.example.aula20.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.example.aula20.services.model.DateConverter
-import com.example.aula20.services.model.Tarefa
+import com.example.aula20.models.DateConverter
+import com.example.aula20.models.Tarefa
 
 @TypeConverters(DateConverter::class)
 @Database(entities = [Tarefa::class], version = 2)

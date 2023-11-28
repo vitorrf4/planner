@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.aula20.R
-import com.example.aula20.services.model.FormataData
-import com.example.aula20.services.model.Tarefa
+import com.example.aula20.models.FormataData
+import com.example.aula20.models.Tarefa
 import com.example.aula20.view.viewholder.TarefaViewHolder
 
 class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolder>() {

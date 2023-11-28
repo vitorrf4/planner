@@ -1,6 +1,6 @@
 package com.example.aula20.view
 
-import RetrofitClient
+import com.example.aula20.RetrofitClient
 import android.os.Build
 import android.os.Bundle
 import android.widget.Toast
@@ -8,8 +8,8 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.aula20.databinding.ActivityCadastroBinding
-import com.example.aula20.services.model.FormataData
-import com.example.aula20.services.model.Tarefa
+import com.example.aula20.models.FormataData
+import com.example.aula20.models.Tarefa
 import com.example.aula20.viewmodel.CadastroViewModel
 import retrofit2.Call
 import retrofit2.Callback

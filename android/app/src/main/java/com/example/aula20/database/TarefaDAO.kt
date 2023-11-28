@@ -1,7 +1,7 @@
-package com.example.aula20.services.repository
+package com.example.aula20.database
 
 import androidx.room.*
-import com.example.aula20.services.model.Tarefa
+import com.example.aula20.models.Tarefa
 
 @Dao
 interface TarefaDAO {

@@ -3,12 +3,11 @@ package com.example.aula20
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import com.example.aula20.services.model.Tarefa
-import com.example.teste_api.models.EVENT_STATUS
-import com.example.teste_api.models.SSEEventData
+import com.example.aula20.models.EVENT_STATUS
+import com.example.aula20.models.SSEEventData
+import com.example.aula20.models.Tarefa
 import com.google.gson.Gson
 import com.google.gson.JsonObject
-import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -20,7 +19,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 class SSERepository {
-    private val EVENTS_URL = "${Properties.apiUrl}/connect"
+    private val EVENTS_URL = "${Properties.apiUrl}/sse/connect"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)
@@ -59,22 +58,11 @@ class SSERepository {
             super.onEvent(eventSource, id, type, data)
 
             Log.d("TEST_SSE", "REPO| event received, Data: $data")
-
             var event = SSEEventData(EVENT_STATUS.SUCCESS)
 
-            //
-//            var tarefas = parseJsonArrayToTarefas())
-            //
-
-            if (data != "[]") {
-                Log.d("TEST_SSE", "if true")
+            if (data != "\"[]\"") {
                 event.tarefa = parseJsonToTarefa(data)
             }
-
-            Log.d("TEST_SSE", "tarefa titulo: ${data}")
-//            Log.d("TEST_SSE", "tarefa desc: ${event.tarefa?.descricao}")
-//            Log.d("TEST_SSE", "tarefa data: ${event.tarefa?.dataFinal}")
-
 
             sseEventsFlow.tryEmit(event)
         }
@@ -100,28 +88,6 @@ class SSERepository {
     private fun initEventSource() {
         EventSources.createFactory(sseClient)
             .newEventSource(request = sseRequest, listener = sseEventSourceListener)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun parseJsonArrayToTarefas(data: String): List<Tarefa> {
-        val listType = object : TypeToken<List<Map<String, String>>>() {}.type
-        val jsonArray: List<Map<String, String>> = Gson().fromJson(data, listType)
-        var tarefas = emptyList<Tarefa>()
-
-        for (jsonObject in jsonArray) {
-            var id = jsonObject.getValue("id")
-            var titulo = jsonObject.getValue("titulo")
-            var descricao = jsonObject.getValue("descricao")
-            var tarefa = Tarefa(0, titulo, descricao, LocalDateTime.now())
-//                var json = Gson().toJson(jsonObject)
-
-//                tarefas = tarefas + Gson().fromJson(json, Tarefa::class.java)
-            tarefas = tarefas + tarefa
-            Log.d("TEST_SSE", "tarefa: $tarefa")
-        }
-        //
-
-        return tarefas;
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -1,8 +1,7 @@
 package com.example.aula20
 
-import RetrofitClient
 import android.util.Log
-import com.example.aula20.services.model.Tarefa
+import com.example.aula20.models.Tarefa
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

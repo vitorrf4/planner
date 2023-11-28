@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.example.aula20.services.model.Tarefa
-import com.example.aula20.services.repository.TarefaRepository
+import com.example.aula20.models.Tarefa
+import com.example.aula20.database.TarefaRepository
 
 class MainViewModel(application: Application) : AndroidViewModel(application) {
 
