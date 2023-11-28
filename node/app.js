@@ -2,6 +2,9 @@
 const express = require('express');
 const cors = require('cors');
 const ngrok = require("@ngrok/ngrok");
+const tarefaController = require("./controllers/tarefaController");
+const tarefasDB = require("./models/tarefaDB");
+const Tarefa = require("./models/tarefa")
 require("dotenv").config();
 
 // configuracao do express
@@ -39,7 +42,8 @@ app.all("*", (req, res, next) => {
 // rotas
 app.get("/", (req, res) => res.send("API está funcionando"));
 app.get('/chat', eventsHandler);
-app.post('/message', adicionarMensagem);
+app.post('/message', adicionarTarefa);
+app.use("/tarefas", tarefaController);
 
 app.all("*", (req, res) => {
     res.status(404);
@@ -48,7 +52,6 @@ app.all("*", (req, res) => {
 
 // funcoes
 let subscribers = [];
-let messages = [];
 
 function eventsHandler(req, res) {
     const headers = {
@@ -57,9 +60,7 @@ function eventsHandler(req, res) {
         'Cache-Control': 'no-cache'
     };
     res.writeHead(200, headers);
-
-    const data = `data: ${JSON.stringify(messages)}\n\n`;
-    res.write(data);
+    res.write(`data: []\n\n`);
 
     const idCliente = Date.now();
     const novoCliente = {
@@ -75,14 +76,18 @@ function eventsHandler(req, res) {
     });
 }
 
-function enviarEventosAosInscritos(newFact) {
-    subscribers.forEach(client => client.response.write(`data: ${JSON.stringify(newFact)}\n\n`))
+function enviarEventosAosInscritos(mensagem) {
+    console.log("enviando evento...");
+    subscribers.forEach(client => client.response.write(`data: ${JSON.stringify(mensagem)}\n\n`))
 }
 
-function adicionarMensagem(req, res) {
-    const novaMensagem = req.body.message;
-    messages.push(novaMensagem);
-    res.json({"message" : novaMensagem});
+function adicionarTarefa(req, res) {
+    const body = req.body;
+    const novaTarefa = new Tarefa(body.titulo, body.descricao, body.dataFinal);
 
-    return enviarEventosAosInscritos(novaMensagem);
+    res.json({"tarefa" : novaTarefa});
+
+    tarefasDB.adicionarTarefa(novaTarefa)
+
+    return enviarEventosAosInscritos(novaTarefa);
 }
