@@ -36,11 +36,17 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         listaTarefas.value = repository.getTarefas()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun excluirTarefa(tarefa: Tarefa) {
         repository.excluirTarefa(tarefa)
         txtToast.value = "Tarefa excluída"
+
+        getTarefasFromDB()
+
+        service.excluirTarefa(tarefa.id);
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun salvarTarefa(tarefa: Tarefa) {
         tarefa.id = repository.salvarTarefa(tarefa).toInt()
 
@@ -69,6 +75,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 salvarTarefa(tarefa)
             }
 
+            "excluir" -> {
+                Log.d(TAG, "VIEWMODEL| Event excluir")
+                var id = getIdFromJson(event.data)
+                var tarefa = repository.getTarefa(id)
+
+                excluirTarefa(tarefa)
+            }
+
             "error" -> {
                 Log.d(TAG, "VIEWMODEL| Event error")
             }
@@ -79,6 +93,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             else -> {}
         }
+    }
+
+    private fun getIdFromJson(data: String): Int {
+        val gson = Gson()
+        val id = gson.fromJson(data, Long::class.java)
+
+        return id.toInt()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -96,7 +117,6 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             val zoneId = ZoneId.of("America/Sao_Paulo")
             dataFinal = LocalDateTime.ofInstant(instant, zoneId)
-            Log.d(TAG, "VIEWMODEL| Data: $dataFinal")
         } catch (e: Exception) {
             Log.d(TAG, "VIEWMODEL| Error on parsing date")
         }

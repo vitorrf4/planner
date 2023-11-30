@@ -46,4 +46,21 @@ class SSEService {
         })
 
     }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun excluirTarefa(id: Int) {
+        var call = retrofit.excluirTarefa(id)
+
+        call.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                Log.d("TEST_SSE", "SSEService| Response: ${response.code()} ${response.body()}")
+            }
+
+            override fun onFailure(call: Call<String>, t: Throwable) {
+                val error = t.message
+                Log.d("TEST_SSE", "SSEService| Error: $error")
+
+            }
+        })
+    }
 }

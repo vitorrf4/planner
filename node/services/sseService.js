@@ -49,7 +49,14 @@ class SseService {
         this.webSession.push(tarefa, "adicionado");
     }
 
-    excluirTarefa(id) {
+    excluirTarefa(req) {
+        const id = req.params.id;
+
+        if (this.isRequestFromWeb(req)) {
+            this.appSession.push(id, "excluir");
+            return;
+        }
+
         tarefaService.excluirTarefa(id);
     }
 
