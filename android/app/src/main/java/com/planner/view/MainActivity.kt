@@ -46,7 +46,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnRetry.setOnClickListener {
-            if (sseViewModel.sseEvents.value?.eventStatus != EVENT_STATUS.CLOSED) {
+            // verifica se a conexão ainda está funcional
+            if (sseViewModel.sseEvents.value?.eventStatus !in
+                listOf(EVENT_STATUS.ERROR, EVENT_STATUS.CLOSED)) {
                 Toast.makeText(this, "Conexão já estabelecida", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -69,16 +71,12 @@ class MainActivity : AppCompatActivity() {
                 when(event.eventStatus) {
                     EVENT_STATUS.OPEN -> {
                         Log.d(TAG, "MAIN| Event open")
+                        Log.d(TAG, "MAIN| replacing tarefas...")
+                        service.replaceTarefas(viewModel.getListaTarefas().value ?: emptyList())
                     }
 
                     EVENT_STATUS.SUCCESS -> {
                         Log.d(TAG, "MAIN| Event successful")
-
-                        if (event.tarefa == null) {
-                            Log.d(TAG, "MAIN| replacing tarefas...")
-                            service.replaceTarefas(viewModel.getListaTarefas().value ?: emptyList())
-                            return@let
-                        }
 
                         viewModel.salvarTarefa(event.tarefa!!)
                     }

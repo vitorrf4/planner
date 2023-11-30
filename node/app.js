@@ -2,7 +2,6 @@
 const express = require('express');
 const cors = require('cors');
 const ngrok = require("./ngrok");
-const tarefaController = require("./controllers/tarefaController");
 const sseController = require("./controllers/sseController");
 
 // configuracao do express
@@ -21,15 +20,16 @@ app.listen(PORT, () => {
 // middleware de debug
 app.all("*", (req, res, next) => {
     console.log(`${req.method} ${req.url}`);
+
     if (req.method === "POST")
         console.log(req.body);
+
 
     next();
 });
 
 // rotas
-app.use("/tarefas", tarefaController);
-app.use("/sse", sseController);
+app.use(sseController);
 
 // tratamento de rota nao existente
 app.all("*", (req, res) => {

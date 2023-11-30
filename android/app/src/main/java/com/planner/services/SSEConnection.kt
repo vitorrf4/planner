@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 class SSEConnection {
-    private val EVENTS_URL = "${com.planner.Properties.apiUrl}/sse/connect"
+    private val EVENTS_URL = "${com.planner.Properties.apiUrl}/app/connect"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)
@@ -57,12 +57,10 @@ class SSEConnection {
         override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
             super.onEvent(eventSource, id, type, data)
 
-            Log.d("TEST_SSE", "REPO| event received, Data: $data")
+            Log.d("TEST_SSE", "REPO| Event received, Data: $data")
             var event = SSEEventData(EVENT_STATUS.SUCCESS)
 
-            if (data != "\"[]\"") {
-                event.tarefa = parseJsonToTarefa(data)
-            }
+            event.tarefa = parseJsonToTarefa(data)
 
             sseEventsFlow.tryEmit(event)
         }
@@ -87,14 +85,13 @@ class SSEConnection {
 
     private fun initEventSource() {
         EventSources.createFactory(sseClient)
-            .newEventSource(request = sseRequest, listener = sseEventSourceListener)
+            .newEventSource(sseRequest, sseEventSourceListener)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun parseJsonToTarefa(data: String): Tarefa {
         val gson = Gson()
         val jsonObject = gson.fromJson(data, JsonObject::class.java)
-        Log.d("TEST_SSE", "json object: $jsonObject")
 
         var titulo = jsonObject.get("titulo").asString
         var descricao = jsonObject.get("descricao").asString

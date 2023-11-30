@@ -13,7 +13,7 @@ class SSEService {
 
         call.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {
-                Log.d("TEST_SSE", "SSEService| Response success: ${response.body()}")
+                Log.d("TEST_SSE", "SSEService| Response: ${response.code()} ${response.body()}")
             }
 
             override fun onFailure(call: Call<String>, t: Throwable) {

@@ -12,11 +12,11 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class SSEViewModel : ViewModel() {
-    private var repository = SSEConnection()
+    private var sseConnection = SSEConnection()
     var sseEvents = MutableLiveData<SSEEventData>()
 
     fun getSSEEvents() = viewModelScope.launch {
-        repository.sseEventsFlow
+        sseConnection.sseEventsFlow
             .onEach { sseEventData ->
                 sseEvents.postValue(sseEventData)
             }
@@ -27,6 +27,6 @@ class SSEViewModel : ViewModel() {
     }
 
     fun retryConnection() {
-        this.repository = SSEConnection()
+        this.sseConnection = SSEConnection()
     }
 }

@@ -4,6 +4,8 @@ node/node_modules
 android/.idea
 .idea
 
+*/*.iml
+
 android/*.iml
 android/.gradle
 android/local.properties

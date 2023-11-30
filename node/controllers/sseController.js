@@ -1,39 +1,44 @@
 const express = require("express");
+const sse = require("better-sse")
+const service = require("../services/tarefaService")
+
 const router = express.Router();
-const Tarefa = require("../models/tarefa");
-const tarefasDB = require("../models/tarefaDB");
-const betterSse = require("better-sse")
 
-const channel = betterSse.createChannel();
+const channel = sse.createChannel();
+let webSession;
+let appSession;
 
-router.get("/connect", async (req, res) => {
-    const session = await betterSse.createSession(req, res);
+router.get("/web/connect", async (req, res) => {
+    webSession = await sse.createSession(req, res);
+    channel.register(webSession);
 
-    channel.register(session);
-
-    console.log("A user has joined: ", channel.sessionCount);
-
-    // verifica se o request está vindo do browser
-    if (req.headers["user-agent"].includes("Mozilla")) {
-        session.push(tarefasDB.getTarefas());
-        return;
-    }
-
-    session.push("[]");
+    webSession.push(service.getTarefas(), "replace");
 });
 
-router.post("/add-tarefa", async (req, res) => {
-    const body = req.body;
-    const novaTarefa = new Tarefa(body.titulo, body.descricao, body.dataFinal);
-
-    tarefasDB.adicionarTarefa(novaTarefa);
-
-    return channel.broadcast(novaTarefa);
+router.get("/app/connect", async (req, res) => {
+    appSession = await sse.createSession(req, res);
+    channel.register(appSession);
 });
 
-router.get("/sessions", (req, res) => {
-    res.json({channels: channel.activeSessions.length});
-})
+router.post("/web/add-tarefa", service.addTarefa, (req, res) => {
+    channel.broadcast(res.locals.tarefa, "adicionado");
+});
 
+router.post("/app/add-tarefa", service.addTarefa, (req, res) => {
+    webSession.push(res.locals.tarefa, "adicionado");
+});
+
+router.post("/app/replace", service.replaceTarefas, (req, res) => {
+    webSession.push(service.getTarefas(), "replace");
+
+    res.status(200).json("Tarefas sincronizadas");
+});
+
+channel.on("session-registered", () => {
+    console.log(`New session registered ${channel.sessionCount}`);
+});
+channel.on("session-deregistered", () => {
+    console.log(`Session deregistered ${channel.sessionCount}`);
+});
 
 module.exports = router;

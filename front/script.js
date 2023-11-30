@@ -1,34 +1,37 @@
 //DOM Elements
-const myMessages = document.getElementById("messages")
+const tarefasElement = document.getElementById("tarefas")
 const sendBtn = document.getElementById("send")
 sendBtn.addEventListener("click", sendMsg, false)
 
-let source = new EventSource('http://localhost:3000/sse/connect');
+const source = new EventSource('http://localhost:3000/web/connect');
 
-source.addEventListener('message', function(e) {
+source.addEventListener('adicionado', function(e) {
     console.log(e);
-    // FIX json parsing, no words with commas allowed
     let data = JSON.parse(e.data);
 
-    if (Array.isArray(data)) {
-        for (const message of data) {
-            msgGeneration(message)
-        }
-        return;
+    msgGeneration(data);
+
+}, false);
+
+source.addEventListener('replace', function(e) {
+    console.log(e);
+    let tarefas = JSON.parse(e.data);
+
+    tarefasElement.innerHTML = "";
+
+    for (const tarefa of tarefas) {
+        msgGeneration(tarefa)
     }
 
-    if (data !== []) {
-        msgGeneration(data);
-    }
 }, false);
 
 source.addEventListener('open', function(e) {
-    console.log(e.type);
+    console.log("Connection opened")
 }, false);
 
 source.addEventListener('error', function(e) {
     if (e.readyState === EventSource.CLOSED) {
-        console.log("connection closed")
+        console.log("Connection closed")
     }
 }, false);
 
@@ -44,7 +47,7 @@ async function sendMsg() {
         dataFinal: dataFinal
     });
 
-    await fetch("http://localhost:3000/sse/add-tarefa", {
+    await fetch("http://localhost:3000/web/add-tarefa", {
             method: "POST",
             body: tarefa,
             headers: {
@@ -56,15 +59,5 @@ async function sendMsg() {
 function msgGeneration(msg) {
     const newMessage = document.createElement("p");
     newMessage.innerText = `Titulo: ${msg.titulo}, Desc: ${msg.descricao}, Data: ${msg.dataFinal}`;
-    myMessages.appendChild(newMessage)
-}
-
-async function getTarefas() {
-    const req = await fetch("http://localhost:3000/tarefas");
-    const tarefas = await req.json();
-    console.log(tarefas);
-
-    for (let tarefa of tarefas) {
-        msgGeneration(tarefa);
-    }
+    tarefasElement.appendChild(newMessage)
 }
