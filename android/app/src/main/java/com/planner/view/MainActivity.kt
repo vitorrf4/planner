@@ -1,14 +1,14 @@
 package com.planner.view
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.planner.databinding.ActivityMainBinding
-import com.planner.models.EVENT_STATUS
 import com.planner.services.SSEService
 import com.planner.view.adapter.TarefaAdapter
 import com.planner.viewmodel.MainViewModel
@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var adapter: TarefaAdapter
     private lateinit var viewModel : MainViewModel
     private lateinit var service : SSEService
-    private val sseViewModel = SSEViewModel()
-    private val TAG = "TEST_SSE"
+    private var sseViewModel = SSEViewModel()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -46,18 +46,22 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnRetry.setOnClickListener {
-            // verifica se a conexão ainda está funcional
-            if (sseViewModel.sseEvents.value?.eventStatus !in
-                listOf(EVENT_STATUS.ERROR, EVENT_STATUS.CLOSED)) {
-                Toast.makeText(this, "Conexão já estabelecida", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            sseViewModel.retryConnection()
+            sseViewModel = SSEViewModel()
+            sseViewModel.getSSEEvents()
+            setObservers()
+//            // verifica se a conexão ainda está funcional
+//            if (sseViewModel.sseEvents.value?.type !in
+//                listOf("error", "closed")) {
+//                Toast.makeText(this, "Conexão já estabelecida", Toast.LENGTH_SHORT).show()
+//                return@setOnClickListener
+//            }
+//
+//            sseViewModel.retryConnection()
         }
     }
 
-    fun setObservers(){
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setObservers(){
         viewModel.getListaTarefas().observe(this){
             adapter.updateTarefas(it)
         }
@@ -67,35 +71,11 @@ class MainActivity : AppCompatActivity() {
 
         // observer da conexão com o Node
         sseViewModel.sseEvents.observe(this) {
-            it?.let { event ->
-                when(event.eventStatus) {
-                    EVENT_STATUS.OPEN -> {
-                        Log.d(TAG, "MAIN| Event open")
-                        Log.d(TAG, "MAIN| replacing tarefas...")
-                        service.replaceTarefas(viewModel.getListaTarefas().value ?: emptyList())
-                    }
-
-                    EVENT_STATUS.SUCCESS -> {
-                        Log.d(TAG, "MAIN| Event successful")
-
-                        viewModel.salvarTarefa(event.tarefa!!)
-                    }
-
-                    EVENT_STATUS.ERROR -> {
-                        Log.d(TAG, "MAIN| Event error")
-                    }
-
-                    EVENT_STATUS.CLOSED -> {
-                        Log.d(TAG, "MAIN| Event closed")
-                    }
-
-                    else -> {}
-                }
-            }
+            event -> viewModel.eventHandler(event)
         }
     }
 
-    fun setAdapter(){
+    private fun setAdapter(){
         // setar o adapter para a recycler view
         binding.rcvTarefas.adapter = adapter
 

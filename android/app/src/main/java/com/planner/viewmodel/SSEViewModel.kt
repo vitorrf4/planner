@@ -3,8 +3,7 @@ package com.planner.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.planner.models.EVENT_STATUS
-import com.planner.models.SSEEventData
+import com.planner.models.SSEEvent
 import com.planner.services.SSEConnection
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
@@ -13,15 +12,15 @@ import kotlinx.coroutines.launch
 
 class SSEViewModel : ViewModel() {
     private var sseConnection = SSEConnection()
-    var sseEvents = MutableLiveData<SSEEventData>()
+    var sseEvents = MutableLiveData<SSEEvent>()
 
     fun getSSEEvents() = viewModelScope.launch {
         sseConnection.sseEventsFlow
-            .onEach { sseEventData ->
-                sseEvents.postValue(sseEventData)
+            .onEach { sseEvent ->
+                sseEvents.postValue(sseEvent)
             }
             .catch {
-                sseEvents.postValue(SSEEventData(eventStatus = EVENT_STATUS.ERROR))
+                sseEvents.postValue(SSEEvent("error"))
             }
             .launchIn(viewModelScope)
     }

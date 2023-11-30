@@ -42,12 +42,13 @@ async function sendMsg() {
     const dataFinal = document.getElementById("dataFinal").value
 
     const tarefa = JSON.stringify({
+        id: 0,
         titulo: titulo,
         descricao: descricao,
         dataFinal: dataFinal
     });
 
-    await fetch("http://localhost:3000/add-tarefa", {
+    await fetch("http://localhost:3000/adicionar", {
             method: "POST",
             body: tarefa,
             headers: {
@@ -58,6 +59,6 @@ async function sendMsg() {
 //Creating DOM element to show received messages on browser page
 function msgGeneration(msg) {
     const newMessage = document.createElement("p");
-    newMessage.innerText = `Titulo: ${msg.titulo}, Desc: ${msg.descricao}, Data: ${msg.dataFinal}`;
+    newMessage.innerText = `Id :${msg.id}, Titulo: ${msg.titulo}, Desc: ${msg.descricao}, Data: ${msg.dataFinal}`;
     tarefasElement.appendChild(newMessage)
 }

@@ -1,7 +1,8 @@
 const sse = require("better-sse");
 const channel = sse.createChannel();
+const tarefaService = require("../services/tarefaService")
 
-class SessionHandler {
+class SseService {
     constructor(channel) {
         this.channel = channel;
         this.appSession = null;
@@ -33,6 +34,20 @@ class SessionHandler {
     isRequestFromWeb(req) {
         return req.headers["user-agent"].includes("Mozilla");
     }
+
+    adicionarTarefa(req) {
+        const tarefa = tarefaService.criarTarefa(req.body);
+
+        if (this.isRequestFromWeb(req)) {
+            this.appSession.push(tarefa, "adicionar");
+
+            return;
+        }
+
+        tarefaService.addTarefa(tarefa);
+
+        this.webSession.push(tarefa, "adicionado");
+    }
 }
 
 channel.on("session-registered", () => {
@@ -43,4 +58,4 @@ channel.on("session-deregistered", () => {
     console.log(`Session deregistered ${channel.sessionCount}`);
 });
 
-module.exports = new SessionHandler(channel);
+module.exports = new SseService(channel);

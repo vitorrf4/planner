@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.planner.database.TarefaRepository
 import com.planner.models.Tarefa
 import com.planner.models.ValidarTarefas
+import com.planner.services.SSEService
 import java.time.LocalDateTime
 
 class CadastroViewModel(application: Application) : AndroidViewModel(application) {
@@ -16,8 +17,9 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
     private var validacao = ValidarTarefas()
     private var tarefaRepository = TarefaRepository(application.applicationContext)
     private var tarefaFromDB = MutableLiveData<Tarefa>()
+    private var sseService =  SSEService()
 
-    fun getTarefaFromDB() : LiveData<Tarefa>{
+    fun getTarefaFromDB() : LiveData<Tarefa> {
         return tarefaFromDB
     }
 
@@ -26,22 +28,25 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun salvarTarefa(nomeTarefa: String, descricao: String, dataFinal: LocalDateTime) : Boolean {
+    fun salvarTarefa(nomeTarefa: String, descricao: String, dataFinal: LocalDateTime) : Tarefa? {
         if (validacao.verificarCampoVazio(nomeTarefa)){
             txtToast.value = "Informe o nome da tarefa!"
-            return false
+
+            return null
         }
 
         var tarefa = Tarefa(0, nomeTarefa, descricao, dataFinal)
 
-        if (!tarefaRepository.salvarTarefa(tarefa)){
+        tarefa.id = tarefaRepository.salvarTarefa(tarefa).toInt()
+        if (tarefa.id <= 0) {
             txtToast.value = "Erro ao tentar salvar tarefa. Tente novamente mais tarde"
-            return false
+            return null
         }
 
-        txtToast.value = "Tarefa cadastrada com sucesso!"
-        return true
+        sseService.adicionarTarefa(tarefa)
 
+        txtToast.value = "Tarefa cadastrada com sucesso!"
+        return tarefa
     }
 
     fun findTarefa(id: Int) {

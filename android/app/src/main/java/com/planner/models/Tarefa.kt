@@ -13,5 +13,5 @@ data class Tarefa(
     @ColumnInfo @PrimaryKey(autoGenerate = true) var id: Int,
     @ColumnInfo var titulo: String,
     @ColumnInfo var descricao: String,
-    @ColumnInfo @TypeConverters(DateConverter::class) var dataFinal: LocalDateTime = LocalDateTime.now()
+    @ColumnInfo @TypeConverters(DateConverter::class) var dataFinal: LocalDateTime
 )

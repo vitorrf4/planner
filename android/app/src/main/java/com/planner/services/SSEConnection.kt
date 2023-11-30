@@ -1,13 +1,7 @@
 package com.planner.services
 
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import com.google.gson.Gson
-import com.google.gson.JsonObject
-import com.planner.models.EVENT_STATUS
-import com.planner.models.SSEEventData
-import com.planner.models.Tarefa
+import com.planner.models.SSEEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -15,7 +9,6 @@ import okhttp3.Response
 import okhttp3.sse.EventSource
 import okhttp3.sse.EventSourceListener
 import okhttp3.sse.EventSources
-import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 class SSEConnection {
@@ -34,14 +27,14 @@ class SSEConnection {
         .build()
 
     // flow
-    var sseEventsFlow = MutableStateFlow(SSEEventData(EVENT_STATUS.NONE))
+    var sseEventsFlow = MutableStateFlow(SSEEvent())
 
     private val sseEventSourceListener = object : EventSourceListener() {
         override fun onOpen(eventSource: EventSource, response: Response) {
             super.onOpen(eventSource, response)
 
             Log.d("TEST_SSE", "REPO| Connection opened")
-            val event = SSEEventData(EVENT_STATUS.OPEN)
+            val event = SSEEvent("open")
             sseEventsFlow.tryEmit(event)
         }
 
@@ -49,18 +42,16 @@ class SSEConnection {
             super.onClosed(eventSource)
 
             Log.d("TEST_SSE", "REPO| Connection closed")
-            val event = SSEEventData(EVENT_STATUS.CLOSED)
+            val event = SSEEvent("closed")
             sseEventsFlow.tryEmit(event)
         }
 
-        @RequiresApi(Build.VERSION_CODES.O)
         override fun onEvent(eventSource: EventSource, id: String?, type: String?, data: String) {
             super.onEvent(eventSource, id, type, data)
 
-            Log.d("TEST_SSE", "REPO| Event received, Data: $data")
-            var event = SSEEventData(EVENT_STATUS.SUCCESS)
+            Log.d("TEST_SSE", "REPO| Event received, Type; $type | Data: $data")
 
-            event.tarefa = parseJsonToTarefa(data)
+            var event = SSEEvent(type ?: "", data)
 
             sseEventsFlow.tryEmit(event)
         }
@@ -70,13 +61,11 @@ class SSEConnection {
 
             Log.d("TEST_SSE", "REPO| Failure:")
             Log.d("TEST_SSE", "$response")
-            Log.d("TEST_SSE", "${response?.headers}")
             t?.printStackTrace()
 
-            val event = SSEEventData(EVENT_STATUS.ERROR)
+            val event = SSEEvent("error")
             sseEventsFlow.tryEmit(event)
         }
-
     }
 
     init {
@@ -86,17 +75,5 @@ class SSEConnection {
     private fun initEventSource() {
         EventSources.createFactory(sseClient)
             .newEventSource(sseRequest, sseEventSourceListener)
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun parseJsonToTarefa(data: String): Tarefa {
-        val gson = Gson()
-        val jsonObject = gson.fromJson(data, JsonObject::class.java)
-
-        var titulo = jsonObject.get("titulo").asString
-        var descricao = jsonObject.get("descricao").asString
-        var tarefa = Tarefa(0, titulo, descricao, LocalDateTime.now())
-
-        return tarefa
     }
 }

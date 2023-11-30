@@ -9,18 +9,13 @@ import androidx.lifecycle.ViewModelProvider
 import com.planner.databinding.ActivityCadastroBinding
 import com.planner.models.FormataData
 import com.planner.models.Tarefa
-import com.planner.services.RetrofitClient
 import com.planner.viewmodel.CadastroViewModel
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
 class CadastroActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityCadastroBinding
     private lateinit var cadastroViewModel: CadastroViewModel
     private lateinit var tarefaFromDB : Tarefa
@@ -47,56 +42,37 @@ class CadastroActivity : AppCompatActivity() {
             binding.txtTitulo.text = "EDITAR TAREFA"
         }
 
-
         // ação de clique do botão salvar
         binding.btnSalvar.setOnClickListener {
-
             var titulo = binding.edtNomeTarefa.text.toString()
             var descricao = binding.edtDescricao.text.toString()
             var data = LocalDate.parse(binding.edtDataFinal.text.toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
             var dataFinal = LocalDateTime.of(data, LocalTime.now())
 
-            // tentar salvar a tarefa digitada no form no banco de dados
-            if(idTarefa > 0){
+            if (idTarefa > 0) {
                 editarTarefa(titulo, descricao, dataFinal)
-            } else if(cadastroViewModel.salvarTarefa(titulo, descricao, dataFinal)){
-                sendMessage(Tarefa(0, titulo, descricao, dataFinal))
-                finish()
+                return@setOnClickListener
             }
-        }
 
+            cadastroViewModel.salvarTarefa(titulo, descricao, dataFinal)
+
+            finish()
+        }
     }
 
-    private fun editarTarefa(titulo: String, descricao: String, dataFinal: LocalDateTime) { // tenta editar
+    private fun editarTarefa(titulo: String, descricao: String, dataFinal: LocalDateTime) {
         tarefaFromDB.titulo = titulo
         tarefaFromDB.descricao = descricao
         tarefaFromDB.dataFinal = dataFinal
 
-        if(cadastroViewModel.atualizarTarefa(tarefaFromDB)){
+        if (cadastroViewModel.atualizarTarefa(tarefaFromDB)) {
             finish()
         }
-
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun sendMessage(tarefa : Tarefa) {
-        var service = RetrofitClient.createMessageService()
-        var call: Call<Tarefa> = service.addTarefa(tarefa)
-
-        call.enqueue(object : Callback<Tarefa> {
-            override fun onResponse(call: Call<Tarefa>, r: Response<Tarefa>) {
-//                var response = Tarefa(r.body()?.message ?: "")
-            }
-
-            override fun onFailure(call: Call<Tarefa>, t: Throwable) {
-                val error = t.message
-            }
-        })
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun setObservers(){
+    fun setObservers() {
         cadastroViewModel.getTxtToast().observe(this){
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }

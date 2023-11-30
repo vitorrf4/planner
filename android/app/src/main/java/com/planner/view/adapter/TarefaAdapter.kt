@@ -26,7 +26,7 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: TarefaViewHolder, position: Int) {
         var tarefa = listaTarefas[position]
-        holder.txtNomeTarefa.text = "Titulo: ${tarefa.titulo}, Desc: ${tarefa.descricao}\n" +
+        holder.txtNomeTarefa.text = "Titulo: ${tarefa.titulo}\n" +
                 "Data:${FormataData.formatar(tarefa.dataFinal.toLocalDate())}\n" +
                 "Hora: ${tarefa.dataFinal.toLocalTime()}"
 

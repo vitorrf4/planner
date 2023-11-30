@@ -1,0 +1,80 @@
+/* General styles */
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+    margin-right: 25%;
+    margin-left: 25%;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    margin-bottom: 20px;
+    font-size: 25px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input {
+    width: 40%;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+#descricao {
+    width: 100%;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Task list styles */
+#h2_div_title {
+    margin-top: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+li button {
+    margin-left: 10px;
+}
+
+li .buttons-container {
+    display: flex;
+}
+
+/* Table styles */
+table {
+    margin-bottom: 20px;
+}
+
+td {
+    padding: 10px;
+}

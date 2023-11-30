@@ -6,8 +6,8 @@ import com.planner.models.Tarefa
 class TarefaRepository(context: Context) {
     private val DAO = TarefaDataBase.getInstance(context).getDAO()
 
-    fun salvarTarefa(tarefa: Tarefa) : Boolean {
-        return DAO.salvarTarefa(tarefa) > 0
+    fun salvarTarefa(tarefa: Tarefa) : Long {
+        return DAO.salvarTarefa(tarefa)
     }
 
     fun excluirTarefa(tarefa: Tarefa){

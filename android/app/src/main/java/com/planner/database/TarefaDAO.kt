@@ -19,5 +19,4 @@ interface TarefaDAO {
 
     @Query("SELECT * FROM tarefas")
     fun getTarefas() : List<Tarefa>
-
 }

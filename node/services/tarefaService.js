@@ -1,23 +1,24 @@
 const Tarefa = require("../models/tarefa");
-const tarefas = require("../models/tarefaDB");
-
 
 class TarefaService {
+    tarefas = [];
+
     getTarefas() {
-        return tarefas.getTarefas();
+        return this.tarefas;
     }
 
-    addTarefa(body) {
+    criarTarefa(body) {
         const data = new Date(Date.parse(body.dataFinal));
-        const novaTarefa = new Tarefa(body.titulo, body.descricao, data);
 
-        tarefas.adicionarTarefa(novaTarefa);
+        return new Tarefa(body.id, body.titulo, body.descricao, data);
+    }
 
-        return novaTarefa;
+    addTarefa(tarefa) {
+        this.tarefas.push(tarefa);
     }
 
     replaceTarefas(novasTarefas) {
-        tarefas.replaceTarefas(novasTarefas);
+        this.tarefas = novasTarefas;
     }
 }
 

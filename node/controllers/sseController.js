@@ -1,23 +1,36 @@
 const express = require("express");
-const service = require("../services/tarefaService")
-const sessionHandler = require("../services/sessionHandler");
+const tarefaService = require("../services/tarefaService")
+const sseService = require("../services/sseService");
 
 const router = express.Router();
 
 router.get("/connect", async (req, res) => {
-    await sessionHandler.connect(req, res, service.getTarefas());
+    try {
+        await sseService.connect(req, res, tarefaService.getTarefas());
+    } catch (e) {
+        console.log("Erro:", e);
+    }
 });
 
-router.post("/add-tarefa", (req, res) => {
-    const novaTarefa = service.addTarefa(req.body);
-    sessionHandler.emitEvent(req, novaTarefa, "adicionado");
+router.post("/adicionar", async (req, res) => {
+    try {
+        sseService.adicionarTarefa(req);
+
+        res.status(200).json("Adicionado");
+    } catch(e) {
+        console.log("Erro:", e);
+    }
 });
 
 router.post("/replace", (req, res) => {
-    service.replaceTarefas(req.body);
-    sessionHandler.emitEvent(req, service.getTarefas(), "replace");
+    try {
+        tarefaService.replaceTarefas(req.body);
+        sseService.emitEvent(req, tarefaService.getTarefas(), "replace");
 
-    res.status(200).json("Tarefas sincronizadas");
+        res.status(200).json("Tarefas sincronizadas");
+    } catch (e) {
+        console.log("Erro:", e);
+    }
 });
 
 module.exports = router;
