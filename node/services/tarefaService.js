@@ -20,6 +20,11 @@ class TarefaService {
     replaceTarefas(novasTarefas) {
         this.tarefas = novasTarefas;
     }
+
+    excluirTarefa(id) {
+        const indexDelete = this.tarefas.findIndex(t => t.id === id);
+        this.tarefas.splice(indexDelete, 1);
+    }
 }
 
 module.exports = new TarefaService();

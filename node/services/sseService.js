@@ -48,6 +48,14 @@ class SseService {
 
         this.webSession.push(tarefa, "adicionado");
     }
+
+    excluirTarefa(id) {
+        tarefaService.excluirTarefa(id);
+    }
+
+    sendTarefasToWeb() {
+        this.webSession.push(tarefaService.getTarefas(), "replace");
+    }
 }
 
 channel.on("session-registered", () => {
