@@ -7,22 +7,17 @@ class TarefaService {
         return tarefas.getTarefas();
     }
 
-    addTarefa(req, res, next) {
-        const body = req.body;
+    addTarefa(body) {
         const data = new Date(Date.parse(body.dataFinal));
         const novaTarefa = new Tarefa(body.titulo, body.descricao, data);
 
         tarefas.adicionarTarefa(novaTarefa);
 
-        res.locals.tarefa = novaTarefa;
-        next();
+        return novaTarefa;
     }
 
-    replaceTarefas(req ,res, next) {
-        const novasTarefas = req.body;
+    replaceTarefas(novasTarefas) {
         tarefas.replaceTarefas(novasTarefas);
-
-        next();
     }
 }
 

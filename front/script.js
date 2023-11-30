@@ -3,7 +3,7 @@ const tarefasElement = document.getElementById("tarefas")
 const sendBtn = document.getElementById("send")
 sendBtn.addEventListener("click", sendMsg, false)
 
-const source = new EventSource('http://localhost:3000/web/connect');
+const source = new EventSource('http://localhost:3000/connect');
 
 source.addEventListener('adicionado', function(e) {
     console.log(e);
@@ -47,7 +47,7 @@ async function sendMsg() {
         dataFinal: dataFinal
     });
 
-    await fetch("http://localhost:3000/web/add-tarefa", {
+    await fetch("http://localhost:3000/add-tarefa", {
             method: "POST",
             body: tarefa,
             headers: {

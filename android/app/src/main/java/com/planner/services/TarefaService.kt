@@ -6,8 +6,8 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 interface TarefaService {
-    @POST("app/add-tarefa")
+    @POST("add-tarefa")
     fun addTarefa(@Body tarefa: Tarefa) : Call<Tarefa>
-    @POST("app/replace")
+    @POST("replace")
     fun replaceTarefas(@Body tarefas: List<Tarefa>) : Call<String>
 }

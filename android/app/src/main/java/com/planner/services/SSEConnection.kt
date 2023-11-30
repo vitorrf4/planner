@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
 
 class SSEConnection {
-    private val EVENTS_URL = "${com.planner.Properties.apiUrl}/app/connect"
+    private val EVENTS_URL = "${com.planner.Properties.apiUrl}/connect"
 
     private val sseClient = OkHttpClient.Builder()
         .connectTimeout(6, TimeUnit.SECONDS)
