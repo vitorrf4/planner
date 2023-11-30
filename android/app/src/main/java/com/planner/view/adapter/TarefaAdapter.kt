@@ -7,9 +7,9 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.planner.R
-import com.planner.models.FormataData
 import com.planner.models.Tarefa
 import com.planner.view.viewholder.TarefaViewHolder
+import java.time.format.DateTimeFormatter
 
 class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolder>() {
     lateinit var listaTarefas : List<Tarefa>
@@ -26,20 +26,20 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: TarefaViewHolder, position: Int) {
         var tarefa = listaTarefas[position]
-        holder.txtNomeTarefa.text = "Titulo: ${tarefa.titulo}\n" +
-                "Data:${FormataData.formatar(tarefa.dataFinal.toLocalDate())}\n" +
-                "Hora: ${tarefa.dataFinal.toLocalTime()}"
 
-        // ação de clique longo
+        val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")
+        var dataFormatada = tarefa.dataFinal.format(formatter)
+
+
+        holder.txtNomeTarefa.text = "Titulo: ${tarefa.titulo}\n" +
+                "Data limite: $dataFormatada"
+
         holder.itemView.setOnLongClickListener {
-            // codigo para excluir tarefa
             onItemLongClick?.invoke(position)
             true
         }
 
-        // ação de clique simples
         holder.itemView.setOnClickListener{
-            // codigo para editar tarefa
             onItemClick?.invoke(position)
         }
 
@@ -49,7 +49,6 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
         return listaTarefas.size
     }
 
-    // método para atualizar a lista de tarefas local
     fun updateTarefas(list : List<Tarefa>){
         listaTarefas = list
         notifyDataSetChanged()

@@ -1,14 +1,18 @@
 package com.planner.services
 
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import com.planner.models.Tarefa
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class SSEService {
+    @RequiresApi(Build.VERSION_CODES.O)
     private var retrofit = RetrofitClient.createMessageService()
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun replaceTarefas(tarefas : List<Tarefa>) {
         var call = retrofit.replaceTarefas(tarefas)
 
@@ -25,6 +29,7 @@ class SSEService {
         })
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun adicionarTarefa(tarefa: Tarefa) {
         var call = retrofit.addTarefa(tarefa)
 

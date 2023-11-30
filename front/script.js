@@ -1,7 +1,7 @@
 //DOM Elements
 const tarefasElement = document.getElementById("tarefas")
 const sendBtn = document.getElementById("send")
-sendBtn.addEventListener("click", sendMsg, false)
+sendBtn.addEventListener("click", adicionarTarefa, false)
 
 const source = new EventSource('http://localhost:3000/connect');
 
@@ -9,7 +9,7 @@ source.addEventListener('adicionado', function(e) {
     console.log(e);
     let data = JSON.parse(e.data);
 
-    msgGeneration(data);
+    criarElementoHTMLdaTarefa(data);
 
 }, false);
 
@@ -20,7 +20,7 @@ source.addEventListener('replace', function(e) {
     tarefasElement.innerHTML = "";
 
     for (const tarefa of tarefas) {
-        msgGeneration(tarefa)
+        criarElementoHTMLdaTarefa(tarefa)
     }
 
 }, false);
@@ -36,7 +36,7 @@ source.addEventListener('error', function(e) {
 }, false);
 
 //Sending message from client
-async function sendMsg() {
+async function adicionarTarefa() {
     const titulo = document.getElementById("titulo").value
     const descricao = document.getElementById("descricao").value
     const dataFinal = document.getElementById("dataFinal").value
@@ -57,8 +57,12 @@ async function sendMsg() {
 }
 
 //Creating DOM element to show received messages on browser page
-function msgGeneration(msg) {
+function criarElementoHTMLdaTarefa(tarefa) {
     const newMessage = document.createElement("p");
-    newMessage.innerText = `Id :${msg.id}, Titulo: ${msg.titulo}, Desc: ${msg.descricao}, Data: ${msg.dataFinal}`;
-    tarefasElement.appendChild(newMessage)
+    const dataFinal = new Date(tarefa.dataFinal);
+
+    newMessage.innerText = `Titulo: ${tarefa.titulo}, 
+        Descrição: ${tarefa.descricao} 
+        Data limite: ${dataFinal.toLocaleDateString()} ${dataFinal.getHours()}:${dataFinal.getMinutes()}`;
+    tarefasElement.appendChild(newMessage);
 }
