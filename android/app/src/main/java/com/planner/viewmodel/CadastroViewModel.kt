@@ -27,6 +27,10 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
         return txtToast
     }
 
+    fun findTarefa(id: Int) {
+        tarefaFromDB.value = tarefaRepository.getTarefa(id)
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun salvarTarefa(nomeTarefa: String, descricao: String, dataFinal: LocalDateTime) : Tarefa? {
         if (validacao.verificarCampoVazio(nomeTarefa)){
@@ -49,12 +53,8 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
         return tarefa
     }
 
-    fun findTarefa(id: Int) {
-       tarefaFromDB.value = tarefaRepository.getTarefa(id)
-    }
-
+    @RequiresApi(Build.VERSION_CODES.O)
     fun atualizarTarefa(tarefa: Tarefa) : Boolean {
-
         if (validacao.verificarCampoVazio(tarefa.titulo)){
             txtToast.value = "Informe o nome da tarefa"
             return false
@@ -62,6 +62,9 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
 
         tarefaRepository.atualizarTarefa(tarefa)
         txtToast.value = "Tarefa atualizada"
+
+        sseService.atualizarTarefa(tarefa)
+
         return true
     }
 

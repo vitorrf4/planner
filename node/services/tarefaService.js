@@ -25,6 +25,11 @@ class TarefaService {
         const indexDelete = this.tarefas.findIndex(t => t.id === id);
         this.tarefas.splice(indexDelete, 1);
     }
+
+    atualizarTarefa(tarefa) {
+        const indexTarefa = this.tarefas.findIndex(t => t.id === tarefa.id);
+        this.tarefas[indexTarefa] = tarefa;
+    }
 }
 
 module.exports = new TarefaService();

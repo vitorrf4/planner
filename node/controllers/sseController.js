@@ -34,6 +34,18 @@ router.delete("/deletar/:id", async (req, res) => {
     }
 });
 
+router.put("/atualizar", async (req, res) => {
+    try {
+        sseService.atualizarTarefa(req);
+
+        sseService.sendTarefasToWeb();
+
+        res.status(200).json("Tarefa atualizada");
+    } catch (e) {
+        console.log("Erro:", e);
+    }
+});
+
 router.post("/replace", (req, res) => {
     try {
         tarefaService.replaceTarefas(req.body);

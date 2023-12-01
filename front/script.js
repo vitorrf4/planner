@@ -8,7 +8,7 @@ const source = new EventSource('http://localhost:3000/connect');
 // listeners
 source.addEventListener('adicionado', function(e) {
     console.log(e);
-    let data = JSON.parse(e.data);
+    const data = JSON.parse(e.data);
 
     adicionaTarefa(data);
 
@@ -16,7 +16,7 @@ source.addEventListener('adicionado', function(e) {
 
 source.addEventListener('replace', function (e) {
     console.log(e);
-    let tarefas = JSON.parse(e.data);
+    const tarefas = JSON.parse(e.data);
 
     tarefasElement.innerHTML = "";
 
@@ -69,25 +69,64 @@ function criaElementoHTMLTarefa(tarefa) {
 
     const dataFinal = new Date(tarefa.dataFinal);
 
+    // Adiciona digito adicional caso o tempo só tenha um digito
+    const adicionaSegundoDigito = (value) => (value < 10 ? `0${value}` : value);
+    const horaFormatada = adicionaSegundoDigito(dataFinal.getHours());
+    const minutosFormatado = adicionaSegundoDigito(dataFinal.getMinutes());
+
     li.innerText = `Titulo: ${tarefa.titulo}
         Descrição: ${tarefa.descricao} 
-        Data limite: ${dataFinal.toLocaleDateString()} ${dataFinal.getHours()}:${dataFinal.getMinutes()}`;
+        Data limite: ${dataFinal.toLocaleDateString()} ${horaFormatada}:${minutosFormatado}
+        Status: ${tarefa.status}`;
 
-    const excluirBtn = document.createElement("button");
-
-    excluirBtn.innerHTML = "EXCLUIR";
-    excluirBtn.onclick = () => excluirTarefa(tarefa.id);
-    li.append(excluirBtn);
+    adicionaBotoes(li, tarefa);
 
     return li;
 }
 
+function adicionaBotoes(li, tarefa) {
+    const excluirBtn = document.createElement("button");
+    excluirBtn.innerHTML = "EXCLUIR";
+    excluirBtn.onclick = () => excluirTarefa(tarefa.id);
+
+    const statusBtn = document.createElement("button");
+    statusBtn.innerHTML = "MUDAR STATUS";
+    statusBtn.onclick = () => atualizarTarefa(tarefa);
+
+    li.append(statusBtn, excluirBtn);
+}
+
 async function excluirTarefa(id) {
-    console.log(id);
     await fetch(`http://localhost:3000/deletar/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
         }
     });
+}
+
+async function atualizarTarefa(tarefa) {
+    mudarStatus(tarefa);
+
+    tarefa.dataFinal = new Date(Date.parse(tarefa.dataFinal.toString()));
+
+    const tarefaJson = JSON.stringify(tarefa);
+
+    console.log(tarefaJson);
+
+    await fetch(`http://localhost:3000/atualizar`, {
+        method: "PUT",
+        body: tarefaJson,
+        headers: {
+            "Content-Type": "application/json",
+        }
+    });
+}
+
+function mudarStatus(tarefa) {
+    if (tarefa.status === "PENDENTE") {
+        tarefa.status = "COMPLETA";
+    } else {
+        tarefa.status = "PENDENTE";
+    }
 }

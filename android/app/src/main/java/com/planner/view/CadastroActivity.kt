@@ -28,21 +28,16 @@ class CadastroActivity : AppCompatActivity() {
         binding = ActivityCadastroBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // inicializar o cadastroViewModel
         cadastroViewModel = ViewModelProvider(this).get(CadastroViewModel::class.java)
-        // setar observadores
         setObservers()
 
-        // vamos tentar receber um id vindo da intent
         idTarefa = intent.getIntExtra("idTarefa", idTarefa)
 
-        // verificar o valor de idTarefa
         if (idTarefa > 0) {
             cadastroViewModel.findTarefa(idTarefa)
             binding.txtTitulo.text = "EDITAR TAREFA"
         }
 
-        // ação de clique do botão salvar
         binding.btnSalvar.setOnClickListener {
             var titulo = binding.edtNomeTarefa.text.toString()
             var descricao = binding.edtDescricao.text.toString()
@@ -61,6 +56,7 @@ class CadastroActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun editarTarefa(titulo: String, descricao: String, dataFinal: LocalDateTime) {
         tarefaFromDB.titulo = titulo
         tarefaFromDB.descricao = descricao

@@ -21,9 +21,8 @@ app.listen(PORT, () => {
 app.all("*", (req, res, next) => {
     console.log(`${req.method} ${req.url}`);
 
-    if (req.method === "POST")
+    if (req.method === "POST" || req.method === "PUT")
         console.log(req.body);
-
 
     next();
 });

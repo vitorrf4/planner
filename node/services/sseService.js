@@ -60,6 +60,17 @@ class SseService {
         tarefaService.excluirTarefa(id);
     }
 
+    atualizarTarefa(req) {
+        const tarefa = req.body;
+
+        if (this.isRequestFromWeb(req)) {
+            this.appSession.push(tarefa, "atualizar");
+            return;
+        }
+
+        tarefaService.atualizarTarefa(tarefa);
+    }
+
     sendTarefasToWeb() {
         this.webSession.push(tarefaService.getTarefas(), "replace");
     }

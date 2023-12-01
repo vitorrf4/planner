@@ -11,6 +11,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import com.planner.database.TarefaRepository
 import com.planner.models.SSEEvent
+import com.planner.models.STATUS
 import com.planner.models.Tarefa
 import com.planner.services.SSEService
 import java.time.Instant
@@ -59,11 +60,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         service.adicionarTarefa(tarefa)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun mudarStatus(tarefa: Tarefa) {
-        Log.d(TAG, "VIEWMODEL| status before: ${tarefa.status}")
         tarefa.mudarStatus()
+
         repository.atualizarTarefa(tarefa)
-        Log.d(TAG, "VIEWMODEL| status after: ${tarefa.status}")
+        service.atualizarTarefa(tarefa)
+
+        getTarefasFromDB()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun atualizarTarefa(tarefa: Tarefa) {
+        repository.atualizarTarefa(tarefa)
+        service.atualizarTarefa(tarefa)
 
         getTarefasFromDB()
     }
@@ -84,12 +94,21 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 salvarTarefa(tarefa)
             }
 
+            "atualizar" -> {
+                Log.d(TAG, "VIEWMODEL| Event atualizar")
+
+                var tarefa = parseJsonToTarefa(event.data)
+                atualizarTarefa(tarefa)
+            }
+
             "excluir" -> {
                 Log.d(TAG, "VIEWMODEL| Event excluir")
                 var id = getIdFromJson(event.data)
                 var tarefa = repository.getTarefa(id)
 
-                excluirTarefa(tarefa)
+                if (tarefa != null) {
+                    excluirTarefa(tarefa)
+                }
             }
 
             "error" -> {
@@ -121,6 +140,20 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         var dataFinal = LocalDateTime.now()
 
+        var status: STATUS = STATUS.PENDENTE
+
+        when (jsonObject.get("status").asString.toUpperCase()) {
+            "PENDENTE" -> {
+                Log.d(TAG, "VIEWMODEL| Requisicao para pender tarefa")
+                status = STATUS.PENDENTE
+            }
+
+            "COMPLETA" -> {
+                Log.d(TAG, "VIEWMODEL| Requisicao para completar tarefa")
+                status = STATUS.COMPLETA
+            }
+        }
+
         try {
             val instant = Instant.parse(jsonObject.get("dataFinal").asString)
 
@@ -130,6 +163,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
             Log.d(TAG, "VIEWMODEL| Error on parsing date")
         }
 
-        return Tarefa(0, titulo, descricao, dataFinal)
+        var id = jsonObject.get("id").asInt
+
+        var tarefa = Tarefa(id, titulo, descricao, dataFinal)
+        tarefa.status = status
+
+        Log.d(TAG, "VIEWMODEL| Tarefa json: $tarefa")
+
+        return tarefa
     }
 }
