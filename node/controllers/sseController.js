@@ -23,9 +23,15 @@ router.post("/adicionar", async (req, res) => {
 });
 
 router.delete("/deletar/:id", async (req, res) => {
-    sseService.excluirTarefa(req);
+    try {
+        sseService.excluirTarefa(req);
 
-    sseService.sendTarefasToWeb();
+        sseService.sendTarefasToWeb();
+
+        res.status(200).json("Tarefa excluida");
+    } catch (e) {
+        console.log("Erro:", e);
+    }
 });
 
 router.post("/replace", (req, res) => {

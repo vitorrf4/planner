@@ -59,6 +59,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         service.adicionarTarefa(tarefa)
     }
 
+    fun mudarStatus(tarefa: Tarefa) {
+        Log.d(TAG, "VIEWMODEL| status before: ${tarefa.status}")
+        tarefa.mudarStatus()
+        repository.atualizarTarefa(tarefa)
+        Log.d(TAG, "VIEWMODEL| status after: ${tarefa.status}")
+
+        getTarefasFromDB()
+    }
+
     @RequiresApi(Build.VERSION_CODES.O)
     fun eventHandler(event: SSEEvent) {
         when (event.type) {

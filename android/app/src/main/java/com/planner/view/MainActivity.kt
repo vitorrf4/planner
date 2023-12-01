@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.planner.databinding.ActivityMainBinding
-import com.planner.services.SSEService
 import com.planner.view.adapter.TarefaAdapter
 import com.planner.viewmodel.MainViewModel
 import com.planner.viewmodel.SSEViewModel
@@ -18,7 +17,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: TarefaAdapter
     private lateinit var viewModel : MainViewModel
-    private lateinit var service : SSEService
     private var sseViewModel = SSEViewModel()
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -28,18 +26,14 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // inicializar adapter
         adapter = TarefaAdapter(this)
-        // Inicializar o view model
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        // setar o layour para a recycler view
         binding.rcvTarefas.layoutManager = LinearLayoutManager(this)
+
         sseViewModel.getSSEEvents()
 
-        setObservers() // seta observadores para o view model
-        setAdapter() // seta e configura adapter
-
-        service = SSEService()
+        setObservers()
+        setAdapter()
 
         binding.btnNovaTarefa.setOnClickListener {
             startActivity(Intent(this, CadastroActivity::class.java))
@@ -49,14 +43,6 @@ class MainActivity : AppCompatActivity() {
             sseViewModel = SSEViewModel()
             sseViewModel.getSSEEvents()
             setObservers()
-//            // verifica se a conexão ainda está funcional
-//            if (sseViewModel.sseEvents.value?.type !in
-//                listOf("error", "closed")) {
-//                Toast.makeText(this, "Conexão já estabelecida", Toast.LENGTH_SHORT).show()
-//                return@setOnClickListener
-//            }
-//
-//            sseViewModel.retryConnection()
         }
     }
 
@@ -75,20 +61,16 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun setAdapter(){
-        // setar o adapter para a recycler view
         binding.rcvTarefas.adapter = adapter
 
-        // setar uma função (anonima) para a variavel do adapter
-        // responsavel pela ação de click longo (onItemLongClick)
         adapter.onItemLongClick = {
             var tarefaTemp = adapter.listaTarefas[it]
             viewModel.excluirTarefa(tarefaTemp)
             viewModel.getTarefasFromDB()
         }
 
-        // setar uma função (anonima) para a variavel do adapter
-        // responsavel pela ação de click simples (onItemClick)
         adapter.onItemClick = {
             var tarefaTemp = adapter.listaTarefas[it]
             var intent = Intent(this, CadastroActivity::class.java)
@@ -96,12 +78,15 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        adapter.onStatusClick = {
+            var tarefa = adapter.listaTarefas[it]
+
+            viewModel.mudarStatus(tarefa)
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        // solicita ao view model que puxe os dados do banco de dados
-        // para serem usados pelo adapter
         viewModel.getTarefasFromDB()
     }
 }

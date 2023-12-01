@@ -48,7 +48,7 @@ class CadastroActivity : AppCompatActivity() {
             var descricao = binding.edtDescricao.text.toString()
             var data = LocalDate.parse(binding.edtDataFinal.text.toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
-            var dataFinal = LocalDateTime.of(data, LocalTime.now())
+            var dataFinal = LocalDateTime.of(data, LocalTime.parse("00:00"))
 
             if (idTarefa > 0) {
                 editarTarefa(titulo, descricao, dataFinal)

@@ -15,6 +15,7 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
     lateinit var listaTarefas : List<Tarefa>
     var onItemLongClick : ((Int) -> Unit)? = null
     var onItemClick : ((Int) -> Unit)? = null
+    var onStatusClick : ((Int) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TarefaViewHolder {
         val tarefaLayout = LayoutInflater.from(context)
@@ -32,7 +33,7 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
 
 
         holder.txtNomeTarefa.text = "Titulo: ${tarefa.titulo}\n" +
-                "Data limite: $dataFormatada"
+                "Data limite: $dataFormatada\n Status: ${tarefa.status.toString().toLowerCase()}"
 
         holder.itemView.setOnLongClickListener {
             onItemLongClick?.invoke(position)
@@ -41,6 +42,10 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
 
         holder.itemView.setOnClickListener{
             onItemClick?.invoke(position)
+        }
+
+        holder.btnStatus.setOnClickListener {
+            onStatusClick?.invoke(position)
         }
 
     }

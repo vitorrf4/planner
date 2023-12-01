@@ -13,5 +13,21 @@ data class Tarefa(
     @ColumnInfo @PrimaryKey(autoGenerate = true) var id: Int,
     @ColumnInfo var titulo: String,
     @ColumnInfo var descricao: String,
-    @ColumnInfo @TypeConverters(DateConverter::class) var dataFinal: LocalDateTime
-)
+    @ColumnInfo @TypeConverters(DateConverter::class) var dataFinal: LocalDateTime,
+    @ColumnInfo var status: STATUS? = STATUS.PENDENTE
+) {
+    fun mudarStatus() {
+        status = if (status == STATUS.PENDENTE) {
+            STATUS.COMPLETA
+        } else {
+            STATUS.PENDENTE
+        }
+    }
+}
+
+enum class STATUS {
+    PENDENTE,
+    COMPLETA
+}
+
+
