@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import com.planner.database.TarefaRepository
 import com.planner.models.Tarefa
 import com.planner.models.ValidarTarefas
-import com.planner.services.SSEService
+import com.planner.services.ApiService
 import java.time.LocalDateTime
 
 class CadastroViewModel(application: Application) : AndroidViewModel(application) {
@@ -17,7 +17,7 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
     private var validacao = ValidarTarefas()
     private var tarefaRepository = TarefaRepository(application.applicationContext)
     private var tarefaFromDB = MutableLiveData<Tarefa>()
-    private var sseService =  SSEService()
+    private var apiService =  ApiService()
 
     fun getTarefaFromDB() : LiveData<Tarefa> {
         return tarefaFromDB
@@ -32,14 +32,14 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun salvarTarefa(nomeTarefa: String, descricao: String, dataFinal: LocalDateTime) : Tarefa? {
-        if (validacao.verificarCampoVazio(nomeTarefa)){
-            txtToast.value = "Informe o nome da tarefa!"
+    fun salvarTarefa(titulo: String, descricao: String, dataFinal: LocalDateTime) : Tarefa? {
+        if (validacao.verificarCampoVazio(titulo, descricao, dataFinal)){
+            txtToast.value = "Preencha todos os campos!"
 
             return null
         }
 
-        var tarefa = Tarefa(0, nomeTarefa, descricao, dataFinal)
+        var tarefa = Tarefa(0, titulo, descricao, dataFinal)
 
         tarefa.id = tarefaRepository.salvarTarefa(tarefa).toInt()
         if (tarefa.id <= 0) {
@@ -47,7 +47,7 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
             return null
         }
 
-        sseService.adicionarTarefa(tarefa)
+        apiService.adicionarTarefa(tarefa)
 
         txtToast.value = "Tarefa cadastrada com sucesso!"
         return tarefa
@@ -55,7 +55,8 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun atualizarTarefa(tarefa: Tarefa) : Boolean {
-        if (validacao.verificarCampoVazio(tarefa.titulo)){
+        if (validacao.verificarCampoVazio(tarefa.titulo, tarefa.descricao,
+                tarefa.dataFinal)) {
             txtToast.value = "Informe o nome da tarefa"
             return false
         }
@@ -63,7 +64,7 @@ class CadastroViewModel(application: Application) : AndroidViewModel(application
         tarefaRepository.atualizarTarefa(tarefa)
         txtToast.value = "Tarefa atualizada"
 
-        sseService.atualizarTarefa(tarefa)
+        apiService.atualizarTarefa(tarefa)
 
         return true
     }

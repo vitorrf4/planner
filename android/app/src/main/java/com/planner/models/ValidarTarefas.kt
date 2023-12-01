@@ -1,9 +1,9 @@
 package com.planner.models
 
+import java.time.LocalDateTime
+
 class ValidarTarefas {
-
-    fun verificarCampoVazio(nomeTarefa : String) : Boolean {
-        return nomeTarefa.isEmpty()
+    fun verificarCampoVazio(titulo: String, descricao: String, data: LocalDateTime) : Boolean {
+        return titulo.isBlank() || descricao.isBlank() || data == null
     }
-
 }

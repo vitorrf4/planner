@@ -1,4 +1,4 @@
-package com.planner
+package com.planner.misc
 
 class Properties private constructor() {
     companion object {

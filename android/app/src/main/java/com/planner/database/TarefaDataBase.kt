@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.planner.models.DateConverter
+import com.planner.misc.DateConverter
 import com.planner.models.Tarefa
 
 @TypeConverters(DateConverter::class)

@@ -9,7 +9,7 @@ class FormataData {
     companion object {
         @RequiresApi(Build.VERSION_CODES.O)
         fun formatar(data: LocalDate): String? {
-            return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy", ))
+            return data.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
         }
     }
 }

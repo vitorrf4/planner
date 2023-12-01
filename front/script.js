@@ -25,12 +25,12 @@ source.addEventListener('replace', function (e) {
 });
 
 source.addEventListener('open', function(e) {
-    // console.log("Connection opened")
+    console.log("Connection opened");
 });
 
 source.addEventListener('error', function(e) {
     if (e.readyState === EventSource.CLOSED) {
-        console.log("Connection closed")
+        console.log("Connection closed");
     }
 });
 

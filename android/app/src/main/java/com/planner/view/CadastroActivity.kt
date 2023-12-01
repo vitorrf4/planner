@@ -41,7 +41,8 @@ class CadastroActivity : AppCompatActivity() {
         binding.btnSalvar.setOnClickListener {
             var titulo = binding.edtNomeTarefa.text.toString()
             var descricao = binding.edtDescricao.text.toString()
-            var data = LocalDate.parse(binding.edtDataFinal.text.toString(), DateTimeFormatter.ofPattern("dd/MM/yyyy"))
+            var data = LocalDate.parse(binding.edtDataFinal.text.toString(),
+                DateTimeFormatter.ofPattern("dd/MM/yyyy"))
 
             var dataFinal = LocalDateTime.of(data, LocalTime.parse("00:00"))
 
@@ -51,7 +52,6 @@ class CadastroActivity : AppCompatActivity() {
             }
 
             cadastroViewModel.salvarTarefa(titulo, descricao, dataFinal)
-
             finish()
         }
     }
@@ -69,11 +69,11 @@ class CadastroActivity : AppCompatActivity() {
 
     @RequiresApi(Build.VERSION_CODES.O)
     fun setObservers() {
-        cadastroViewModel.getTxtToast().observe(this){
+        cadastroViewModel.getTxtToast().observe(this) {
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
 
-        cadastroViewModel.getTarefaFromDB().observe(this){
+        cadastroViewModel.getTarefaFromDB().observe(this) {
             tarefaFromDB = it
             binding.edtNomeTarefa.setText(tarefaFromDB.titulo)
             binding.edtDescricao.setText(tarefaFromDB.descricao)

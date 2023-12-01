@@ -1,22 +1,39 @@
 const sse = require("better-sse");
-const channel = sse.createChannel();
 const tarefaService = require("../services/tarefaService")
 
 class SseService {
-    constructor(channel) {
-        this.channel = channel;
+    constructor() {
+        this.channel = sse.createChannel();
         this.appSession = null;
         this.webSession = null;
 
-        this.channel.on("session-deregistered", () => { this.emitirEstadoDoApp() });
+
+        this.channel.on("session-registered", () => {
+            console.log(`Session registered ${this.channel.sessionCount}`);
+        });
+
+        this.channel.on("session-deregistered", () => {
+            this.emitirEstadoDoApp()
+        });
     }
 
-    async connect(req, res, tarefas) {
+    emitirEstadoDoApp() {
+        if (this.appSession && this.webSession && this.appSession.isConnected) {
+            this.webSession.push("aberta", "conexao-app");
+            return;
+        }
+
+        if (this.webSession) {
+            this.webSession.push("fechada", "conexao-app");
+        }
+    }
+
+    async connect(req, res) {
         if (this.isRequestFromWeb(req)) {
             this.webSession = await sse.createSession(req, res);
             this.channel.register(this.webSession);
 
-            this.webSession.push(tarefas, "replace");
+            this.sendTarefasToWeb();
 
             this.emitirEstadoDoApp();
             return;
@@ -25,16 +42,6 @@ class SseService {
         this.appSession = await sse.createSession(req, res);
         this.channel.register(this.appSession);
         this.emitirEstadoDoApp();
-    }
-
-    emitirEstadoDoApp() {
-        if (this.appSession && this.webSession && this.appSession.isConnected ) {
-            this.webSession.push("aberta", "conexao-app");
-        } else if (this.webSession) {
-            console.log("web session valido ");
-            this.webSession.push("fechada", "conexao-app");
-        }
-
     }
 
     emitEvent(request, data, eventName) {
@@ -86,17 +93,14 @@ class SseService {
         tarefaService.atualizarTarefa(tarefa);
     }
 
+    replaceTarefas(req) {
+        tarefaService.replaceTarefas(req.body);
+        this.webSession.push(tarefaService.getTarefas(), "replace");
+    }
+
     sendTarefasToWeb() {
         this.webSession.push(tarefaService.getTarefas(), "replace");
     }
 }
 
-channel.on("session-registered", () => {
-    console.log(`Session registered ${channel.sessionCount}`);
-});
-
-channel.on("session-deregistered", () => {
-    console.log(`Session deregistered ${channel.sessionCount}`);
-});
-
-module.exports = new SseService(channel);
+module.exports = new SseService();

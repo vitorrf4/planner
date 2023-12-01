@@ -9,15 +9,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.planner.databinding.ActivityMainBinding
+import com.planner.services.SSEFlow
 import com.planner.view.adapter.TarefaAdapter
 import com.planner.viewmodel.MainViewModel
-import com.planner.viewmodel.SSEViewModel
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: TarefaAdapter
     private lateinit var viewModel : MainViewModel
-    private var sseViewModel = SSEViewModel()
+    private var sseFlow = SSEFlow()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         binding.rcvTarefas.layoutManager = LinearLayoutManager(this)
 
-        sseViewModel.getSSEEvents()
+        sseFlow.getSSEEvents()
 
         setObservers()
         setAdapter()
@@ -40,9 +40,11 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnRetry.setOnClickListener {
-            sseViewModel = SSEViewModel()
-            sseViewModel.getSSEEvents()
-            setObservers()
+            sseFlow = SSEFlow()
+            sseFlow.getSSEEvents()
+            setObserverSSE()
+
+            Toast.makeText(this, "Conexão reestabelecida", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -51,12 +53,18 @@ class MainActivity : AppCompatActivity() {
         viewModel.getListaTarefas().observe(this){
             adapter.updateTarefas(it)
         }
+
         viewModel.getTxtToast().observe(this){
             Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
         }
 
+        setObserverSSE()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setObserverSSE() {
         // observer da conexão com o Node
-        sseViewModel.sseEvents.observe(this) {
+        sseFlow.sseEvents.observe(this) {
             event -> viewModel.eventHandler(event)
         }
     }
@@ -65,19 +73,22 @@ class MainActivity : AppCompatActivity() {
     private fun setAdapter(){
         binding.rcvTarefas.adapter = adapter
 
+        // excluir
         adapter.onItemLongClick = {
             var tarefaTemp = adapter.listaTarefas[it]
             viewModel.excluirTarefa(tarefaTemp)
-            viewModel.getTarefasFromDB()
         }
 
+        // editar
         adapter.onItemClick = {
             var tarefaTemp = adapter.listaTarefas[it]
             var intent = Intent(this, CadastroActivity::class.java)
+
             intent.putExtra("idTarefa", tarefaTemp.id)
             startActivity(intent)
         }
 
+        // mudar status
         adapter.onStatusClick = {
             var tarefa = adapter.listaTarefas[it]
 

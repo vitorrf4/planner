@@ -13,7 +13,7 @@ import com.planner.database.TarefaRepository
 import com.planner.models.SSEEvent
 import com.planner.models.STATUS
 import com.planner.models.Tarefa
-import com.planner.services.SSEService
+import com.planner.services.ApiService
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
@@ -22,7 +22,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private var listaTarefas = MutableLiveData<List<Tarefa>>()
     private var repository = TarefaRepository(application.applicationContext)
     private var txtToast = MutableLiveData<String>()
-    private var service = SSEService()
+    private var service = ApiService()
     private val TAG = "TEST_SSE"
 
     fun getListaTarefas() : LiveData<List<Tarefa>> {
@@ -82,27 +82,27 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun eventHandler(event: SSEEvent) {
         when (event.type) {
             "open" -> {
-                Log.d(TAG, "VIEWMODEL| Event open, replacing tarefas...")
+                Log.d(TAG, "VIEWMODEL| Conexão aberta, enviando tarefas pro front...")
 
                 service.replaceTarefas(repository.getTarefas())
             }
 
             "adicionar" -> {
-                Log.d(TAG, "VIEWMODEL| Event adicionar")
+                Log.d(TAG, "VIEWMODEL| Evento adicionar")
 
                 val tarefa = parseJsonToTarefa(event.data)
                 salvarTarefa(tarefa)
             }
 
             "atualizar" -> {
-                Log.d(TAG, "VIEWMODEL| Event atualizar")
+                Log.d(TAG, "VIEWMODEL| Evento atualizar")
 
                 var tarefa = parseJsonToTarefa(event.data)
                 atualizarTarefa(tarefa)
             }
 
             "excluir" -> {
-                Log.d(TAG, "VIEWMODEL| Event excluir")
+                Log.d(TAG, "VIEWMODEL| Evento excluir")
                 var id = getIdFromJson(event.data)
                 var tarefa = repository.getTarefa(id)
 
@@ -111,15 +111,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }
             }
 
-            "error" -> {
-                Log.d(TAG, "VIEWMODEL| Event error")
-            }
+            "error" -> { Log.d(TAG, "VIEWMODEL| Evento erro") }
 
-            "closed" -> {
-                Log.d(TAG, "VIEWMODEL| Connection closed")
-            }
-
-            else -> {}
+            "closed" -> { Log.d(TAG, "VIEWMODEL| Conexão fechada") }
         }
     }
 
@@ -164,7 +158,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
             dataFinal = LocalDateTime.ofInstant(instant, zoneId)
         } catch (e: Exception) {
-            Log.d(TAG, "VIEWMODEL| Error on parsing date")
+            Log.d(TAG, "VIEWMODEL| Erro no parse da data")
         }
 
         return dataFinal

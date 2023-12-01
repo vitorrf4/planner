@@ -1,4 +1,4 @@
-package com.planner.services
+package com.planner.misc
 
 import android.os.Build
 import androidx.annotation.RequiresApi

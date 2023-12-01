@@ -1,16 +1,15 @@
-package com.planner.viewmodel
+package com.planner.services
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.planner.models.SSEEvent
-import com.planner.services.SSEConnection
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
-class SSEViewModel : ViewModel() {
+class SSEFlow : ViewModel() {
     private var sseConnection = SSEConnection()
     var sseEvents = MutableLiveData<SSEEvent>()
 
@@ -23,9 +22,5 @@ class SSEViewModel : ViewModel() {
                 sseEvents.postValue(SSEEvent("error"))
             }
             .launchIn(viewModelScope)
-    }
-
-    fun retryConnection() {
-        this.sseConnection = SSEConnection()
     }
 }

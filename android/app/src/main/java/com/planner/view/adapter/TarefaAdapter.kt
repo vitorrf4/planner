@@ -33,7 +33,8 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
 
 
         holder.txtNomeTarefa.text = "Titulo: ${tarefa.titulo}\n" +
-                "Data limite: $dataFormatada\n Status: ${tarefa.status.toString().toLowerCase()}"
+                "Data limite: $dataFormatada\n " +
+                "Status: ${tarefa.status.toString()}"
 
         holder.itemView.setOnLongClickListener {
             onItemLongClick?.invoke(position)
@@ -47,7 +48,6 @@ class TarefaAdapter(var context: Context) : RecyclerView.Adapter<TarefaViewHolde
         holder.btnStatus.setOnClickListener {
             onStatusClick?.invoke(position)
         }
-
     }
 
     override fun getItemCount(): Int {
