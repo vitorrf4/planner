@@ -9,27 +9,29 @@
     <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<h1>Planner</h1>
+    <h1>Planner</h1>
 
-<label for="titulo">Titulo</label>
-<input type="text" id="titulo" placeholder="Adicione um titulo">
-<br>
-<label for="descricao">Descrição</label>
-<input type="text" id="descricao" placeholder="Adicione uma descrição">
-<br>
-<label for="dataFinal">Data Final</label>
-<input type="datetime-local" id="dataFinal">
-<br>
-<button id="send">Cadastrar Tarefa</button>
-<hr>
+    <p id="conexao"></p>
 
-<h2 id="h2_div_title"></h2>
-<div id="tarefas">
-    <ul id="task_ul"> </ul>
-</div>
+    <label for="titulo">Titulo</label>
+    <input type="text" id="titulo" placeholder="Adicione um titulo">
+    <br>
+    <label for="descricao">Descrição</label>
+    <input type="text" id="descricao" placeholder="Adicione uma descrição">
+    <br>
+    <label for="dataFinal">Data Final</label>
+    <input type="datetime-local" id="dataFinal">
+    <br>
+    <button id="send" onclick="adicionarTarefa()">Cadastrar Tarefa</button>
+    <hr>
+
+    <h2 id="h2_div_title"></h2>
+    <div id="tarefas">
+        <ul id="task_ul"> </ul>
+    </div>
 
 
-<script src="./script.js"></script>
+    <script src="./script.js"></script>
 
 </body>
 </html>

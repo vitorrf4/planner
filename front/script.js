@@ -1,7 +1,6 @@
 //DOM Elements
 const tarefasElement = document.getElementById("tarefas")
-const sendBtn = document.getElementById("send")
-sendBtn.addEventListener("click", adicionarTarefa, false)
+const conexaoP = document.getElementById("conexao")
 
 const source = new EventSource('http://localhost:3000/connect');
 
@@ -12,7 +11,7 @@ source.addEventListener('adicionado', function(e) {
 
     adicionaTarefa(data);
 
-}, false);
+});
 
 source.addEventListener('replace', function (e) {
     console.log(e);
@@ -23,24 +22,32 @@ source.addEventListener('replace', function (e) {
     for (const tarefa of tarefas) {
         adicionaTarefa(tarefa)
     }
-
-}, false);
+});
 
 source.addEventListener('open', function(e) {
-    console.log("Connection opened")
-}, false);
+    // console.log("Connection opened")
+});
 
 source.addEventListener('error', function(e) {
     if (e.readyState === EventSource.CLOSED) {
         console.log("Connection closed")
     }
-}, false);
+});
+
+source.addEventListener('conexao-app', function(e) {
+    const conexao = JSON.parse(e.data);
+    conexaoP.innerHTML = `Conexão com o app: ${conexao}`;
+});
 
 // funcoes
 async function adicionarTarefa() {
     const titulo = document.getElementById("titulo").value
     const descricao = document.getElementById("descricao").value
-    const dataFinal = document.getElementById("dataFinal").value
+    let dataFinal = document.getElementById("dataFinal").value
+
+    if (!dataFinal) {
+        dataFinal = new Date()
+    }
 
     const tarefa = JSON.stringify({
         id: 0,

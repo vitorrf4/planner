@@ -44,7 +44,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
         getTarefasFromDB()
 
-        service.excluirTarefa(tarefa.id);
+        service.deletarTarefa(tarefa.id);
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -135,41 +135,38 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         val gson = Gson()
         val jsonObject = gson.fromJson(data, JsonObject::class.java)
 
+        var id = jsonObject.get("id").asInt
         var titulo = jsonObject.get("titulo").asString
         var descricao = jsonObject.get("descricao").asString
-
-        var dataFinal = LocalDateTime.now()
 
         var status: STATUS = STATUS.PENDENTE
 
         when (jsonObject.get("status").asString.toUpperCase()) {
-            "PENDENTE" -> {
-                Log.d(TAG, "VIEWMODEL| Requisicao para pender tarefa")
-                status = STATUS.PENDENTE
-            }
-
-            "COMPLETA" -> {
-                Log.d(TAG, "VIEWMODEL| Requisicao para completar tarefa")
-                status = STATUS.COMPLETA
-            }
+            "PENDENTE" -> { status = STATUS.PENDENTE }
+            "COMPLETA" -> { status = STATUS.COMPLETA }
         }
 
-        try {
-            val instant = Instant.parse(jsonObject.get("dataFinal").asString)
+        var dataFinal = parseToDateTime(jsonObject.get("dataFinal").asString)
 
+        var tarefa = Tarefa(id, titulo, descricao, dataFinal)
+        tarefa.status = status
+
+        return tarefa
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun parseToDateTime(data: String): LocalDateTime {
+        var dataFinal = LocalDateTime.now()
+
+        try {
+            val instant = Instant.parse(data)
             val zoneId = ZoneId.of("America/Sao_Paulo")
+
             dataFinal = LocalDateTime.ofInstant(instant, zoneId)
         } catch (e: Exception) {
             Log.d(TAG, "VIEWMODEL| Error on parsing date")
         }
 
-        var id = jsonObject.get("id").asInt
-
-        var tarefa = Tarefa(id, titulo, descricao, dataFinal)
-        tarefa.status = status
-
-        Log.d(TAG, "VIEWMODEL| Tarefa json: $tarefa")
-
-        return tarefa
+        return dataFinal
     }
 }

@@ -14,7 +14,7 @@ interface TarefaService {
     @POST("replace")
     fun replaceTarefas(@Body tarefas: List<Tarefa>) : Call<String>
     @DELETE("deletar/{id}")
-    fun excluirTarefa(@Path(value = "id") id: Int) : Call<String>
+    fun deletarTarefa(@Path(value = "id") id: Int) : Call<String>
     @PUT("atualizar")
     fun atualizarTarefa(@Body tarefa: Tarefa) : Call<String>
 }

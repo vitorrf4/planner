@@ -48,8 +48,8 @@ class SSEService {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun excluirTarefa(id: Int) {
-        var call = retrofit.excluirTarefa(id)
+    fun deletarTarefa(id: Int) {
+        var call = retrofit.deletarTarefa(id)
 
         call.enqueue(object : Callback<String> {
             override fun onResponse(call: Call<String>, response: Response<String>) {

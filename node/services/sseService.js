@@ -7,19 +7,34 @@ class SseService {
         this.channel = channel;
         this.appSession = null;
         this.webSession = null;
+
+        this.channel.on("session-deregistered", () => { this.emitirEstadoDoApp() });
     }
 
     async connect(req, res, tarefas) {
         if (this.isRequestFromWeb(req)) {
             this.webSession = await sse.createSession(req, res);
             this.channel.register(this.webSession);
+
             this.webSession.push(tarefas, "replace");
 
+            this.emitirEstadoDoApp();
             return;
         }
 
         this.appSession = await sse.createSession(req, res);
         this.channel.register(this.appSession);
+        this.emitirEstadoDoApp();
+    }
+
+    emitirEstadoDoApp() {
+        if (this.appSession && this.webSession && this.appSession.isConnected ) {
+            this.webSession.push("aberta", "conexao-app");
+        } else if (this.webSession) {
+            console.log("web session valido ");
+            this.webSession.push("fechada", "conexao-app");
+        }
+
     }
 
     emitEvent(request, data, eventName) {
